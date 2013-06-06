@@ -665,12 +665,12 @@ function mbsb_service_details_meta_box () {
 */
 function mbsb_add_admin_menu() {
 	add_menu_page(__('Sermons', MBSB), __('Sermons', MBSB), 'publish_posts', 'sermon-browser', 'sb_manage_sermons', mbsb_plugins_url('images/icon-16-color.png', __FILE__), 21);
-	add_submenu_page('sermon-browser', __('Files', MBSB), __('Files', MBSB), 'upload_files', 'sermon-browser/files.php', 'sb_files');
-	add_submenu_page('sermon-browser', __('Options', MBSB), __('Options', MBSB), 'manage_options', 'sermon-browser/options.php', 'sb_options');
-	add_submenu_page('sermon-browser', __('Templates', MBSB), __('Templates', MBSB), 'manage_options', 'sermon-browser/templates.php', 'sb_templates');
-	add_submenu_page('sermon-browser', __('Uninstall', MBSB), __('Uninstall', MBSB), 'edit_plugins', 'sermon-browser/uninstall.php', 'sb_uninstall');
-	add_submenu_page('sermon-browser', __('Help', MBSB), __('Help', MBSB), 'publish_posts', 'sermon-browser/help.php', 'sb_help');
-	add_submenu_page('sermon-browser', __('Pray for Japan', MBSB), __('Pray for Japan', MBSB), 'publish_posts', 'sermon-browser/japan.php', 'sb_japan');
+	add_submenu_page('sermon-browser', __('Files', MBSB), __('Files', MBSB), 'upload_files', 'sermon-browser/files.php', 'mbsb_files');
+	add_submenu_page('sermon-browser', __('Options', MBSB), __('Options', MBSB), 'manage_options', 'sermon-browser/options.php', 'mbsb_options_admin_page');
+	add_submenu_page('sermon-browser', __('Templates', MBSB), __('Templates', MBSB), 'manage_options', 'sermon-browser/templates.php', 'mbsb_templates');
+	add_submenu_page('sermon-browser', __('Uninstall', MBSB), __('Uninstall', MBSB), 'edit_plugins', 'sermon-browser/uninstall.php', 'mbsb_uninstall');
+	add_submenu_page('sermon-browser', __('Help', MBSB), __('Help', MBSB), 'publish_posts', 'sermon-browser/help.php', 'mbsb_help');
+	add_submenu_page('sermon-browser', __('Pray for Japan', MBSB), __('Pray for Japan', MBSB), 'publish_posts', 'sermon-browser/japan.php', 'mbsb_japan');
 }
 
 /**
@@ -949,4 +949,20 @@ function mbsb_post_updated_messages($messages) {
 		);
 	return $messages;
 }
+
+/**
+* Display the options admin page
+*/
+function mbsb_options_admin_page() {
+?>
+	<div class="wrap">
+		<div id="icon-sermon-browser" class="icon32 icon32-mbsb-options"><br /></div>
+		<h2><?php _e('Sermon Browser Options', MBSB); ?></h2>
+		<?php settings_errors(); ?>
+		
+		<p>Sermon Browser options page will go here.</p>
+	</div><!-- /.wrap -->
+<?php
+} // end mbsb_options_admin_page
+
 ?>
