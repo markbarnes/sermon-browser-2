@@ -20,10 +20,10 @@ add_filter ('default_option_sermon_browser_2', 'mbsb_default_options');
 * @param array $all_options
 * @return array
 */
-function mbsb_default_options($all_options) {
+function mbsb_default_options($all_options=array() ) {
 	//Standard options
-	$all_options ['audio_shortcode'] = '[mejsaudio src="%URL%"]';
-	$all_options ['video_shortcode'] = '[mejsvideo src="%URL%"]';
+	$all_options ['audio_shortcode'] = '[audio src="%URL%"]';
+	$all_options ['video_shortcode'] = '[video src="%URL%"]';
 	$all_options ['bible_version_'.get_locale()] = 'esv';
 	$all_options ['use_embedded_bible_'.get_locale()] = false;
 	$all_options ['allow_user_to_change_bible'] = true;
@@ -96,6 +96,22 @@ function mbsb_get_option ($option, $default = false) {
 	else
 		$return = $default;
 	return apply_filters ("mbsb_get_option_{$option}", $return);
+}
+
+/**
+* Gets a SermonBrowser default option
+*
+* @param string $option - the name of the option
+* @return mixed
+*/
+function mbsb_get_default_option ($option) {
+	$default_options = mbsb_default_options();
+	if (isset($default_options[$option])) {
+		return $default_options[$option];
+	}
+	else {
+		return null;
+	}
 }
 
 /**
