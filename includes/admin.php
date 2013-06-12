@@ -1025,7 +1025,7 @@ function mbsb_media_player_options_fn() {
 function mbsb_audio_shortcode_fn() {
 	$default_audio_shortcode = mbsb_get_default_option('audio_shortcode');
 	$audio_shortcode = mbsb_get_option('audio_shortcode', $default_audio_shortcode);
-	echo '<input id="mbsb_audio_shortcode" name="sermon_browser_2[audio_shortcode]" size="40" type="text" value="'.esc_attr($audio_shortcode).'" /> Default: <span class="mbsb_default_option">'.$default_audio_shortcode.'</span>';
+	echo '<input id="mbsb_audio_shortcode" name="sermon_browser_2[audio_shortcode]" size="40" type="text" value="'.esc_attr($audio_shortcode).'" /> '.__('Default:', MBSB).' <span class="mbsb_default_option">'.$default_audio_shortcode.'</span>';
 }
 
 /**
@@ -1034,7 +1034,7 @@ function mbsb_audio_shortcode_fn() {
 function mbsb_video_shortcode_fn() {
 	$default_video_shortcode = mbsb_get_default_option('video_shortcode');
 	$video_shortcode = mbsb_get_option('video_shortcode', $default_video_shortcode);
-	echo '<input id="mbsb_video_shortcode" name="sermon_browser_2[video_shortcode]" size="40" type="text" value="'.esc_attr($video_shortcode).'" /> Default: <span class="mbsb_default_option">'.$default_video_shortcode.'</span>';
+	echo '<input id="mbsb_video_shortcode" name="sermon_browser_2[video_shortcode]" size="40" type="text" value="'.esc_attr($video_shortcode).'" /> '.__('Default:', MBSB).' <span class="mbsb_default_option">'.$default_video_shortcode.'</span>';
 }
 
 
