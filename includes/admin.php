@@ -982,33 +982,32 @@ function mbsb_options_page_init() {
 	add_settings_field('mbsb_video_shortcode', __('Video Shortcode', MBSB), 'mbsb_video_shortcode_fn', 'sermon-browser/options', 'mbsb_media_player_options_section');
 	
 	add_settings_section('mbsb_layout_options_section', __('Layout Options', MBSB), 'mbsb_layout_options_fn', 'sermon-browser/options');
-/* Functions do not exist yet.  (Ben Miller 6/12/2013)
-	add_settings_field('mbsb_frontend_sermon_sections', __('Frontend Sermon Sections', MBSB), 'mbsb_frontend_sermon_sections_fn', 'mbsb_layout_options_section');
-	add_settings_field('mbsb_hide_media_heading', __('Hide "Media" heading?', MBSB), 'mbsb_hide_media_heading_fn', 'mbsb_layout_options_section');
-	add_settings_field('mbsb_sermon_image_pos', __('Sermon Image Position', MBSB), 'mbsb_sermon_image_pos_fn', 'mbsb_layout_options_section');
-	add_settings_field('mbsb_preacher_image_pos', __('Preacher Image Position', MBSB), 'mbsb_preacher_image_pos_fn', 'mbsb_layout_options_section');
-	add_settings_field('mbsb_series_image_pos', __('Series Image Position', MBSB), 'mbsb_series_image_pos_fn', 'mbsb_layout_options_section');
-	add_settings_field('mbsb_service_image_pos', __('Service Image Position', MBSB), 'mbsb_service_image_pos_fn', 'mbsb_layout_options_section');
-	add_settings_field('mbsb_add_download_links', __('Add download links?', MBSB), 'mbsb_add_download_links_fn', 'mbsb_layout_options_section');
-	add_settings_field('mbsb_sermon_image_size', __('Sermon Image Size', MBSB), 'mbsb_sermon_image_size_fn', 'mbsb_layout_options_section');
-	add_settings_field('mbsb_preacher_image_size', __('Preacher Image Size', MBSB), 'mbsb_preacher_image_size_fn', 'mbsb_layout_options_section');
-	add_settings_field('mbsb_series_image_size', __('Series Image Size', MBSB), 'mbsb_series_image_size_fn', 'mbsb_layout_options_section');
-	add_settings_field('mbsb_service_image_size', __('Service Image Size', MBSB), 'mbsb_service_image_size_fn', 'mbsb_layout_options_section');
-	add_settings_field('mbsb_excerpt_length', __('Excerpt Length', MBSB), 'mbsb_excerpt_length_fn', 'mbsb_layout_options_section');
-	add_settings_field('mbsb_show_stat_on_sermon_page', __('Show statistics on sermon page?', MBSB), 'mbsb_show_stat_on_sermon_page_fn', 'mbsb_layout_options_section');
+	add_settings_field('mbsb_frontend_sermon_sections', __('Frontend Sermon Sections', MBSB), 'mbsb_frontend_sermon_sections_fn', 'sermon-browser/options', 'mbsb_layout_options_section');
+	add_settings_field('mbsb_hide_media_heading', __('Hide "Media" heading?', MBSB), 'mbsb_hide_media_heading_fn', 'sermon-browser/options', 'mbsb_layout_options_section');
+/* Functions do not exist yet.  (Ben Miller 6/13/2013)
+	add_settings_field('mbsb_sermon_image_pos', __('Sermon Image Position', MBSB), 'mbsb_sermon_image_pos_fn', 'sermon-browser/options', 'mbsb_layout_options_section');
+	add_settings_field('mbsb_preacher_image_pos', __('Preacher Image Position', MBSB), 'mbsb_preacher_image_pos_fn', 'sermon-browser/options', 'mbsb_layout_options_section');
+	add_settings_field('mbsb_series_image_pos', __('Series Image Position', MBSB), 'mbsb_series_image_pos_fn', 'sermon-browser/options', 'mbsb_layout_options_section');
+	//add_settings_field('mbsb_service_image_pos', __('Service Image Position', MBSB), 'mbsb_service_image_pos_fn', 'sermon-browser/options', 'mbsb_layout_options_section');
+	add_settings_field('mbsb_add_download_links', __('Add download links?', MBSB), 'mbsb_add_download_links_fn', 'sermon-browser/options', 'mbsb_layout_options_section');
+	add_settings_field('mbsb_sermon_image_size', __('Sermon Image Size', MBSB), 'mbsb_sermon_image_size_fn', 'sermon-browser/options', 'mbsb_layout_options_section');
+	add_settings_field('mbsb_preacher_image_size', __('Preacher Image Size', MBSB), 'mbsb_preacher_image_size_fn', 'sermon-browser/options', 'mbsb_layout_options_section');
+	add_settings_field('mbsb_series_image_size', __('Series Image Size', MBSB), 'mbsb_series_image_size_fn', 'sermon-browser/options', 'mbsb_layout_options_section');
+	//add_settings_field('mbsb_service_image_size', __('Service Image Size', MBSB), 'mbsb_service_image_size_fn', 'sermon-browser/options', 'mbsb_layout_options_section');
+	add_settings_field('mbsb_excerpt_length', __('Excerpt Length', MBSB), 'mbsb_excerpt_length_fn', 'sermon-browser/options', 'mbsb_layout_options_section');
+	add_settings_field('mbsb_show_stat_on_sermon_page', __('Show statistics on sermon page?', MBSB), 'mbsb_show_stat_on_sermon_page_fn', 'sermon-browser/options', 'mbsb_layout_options_section');
 
 	add_settings_section('mbsb_bible_version_options_section', __('Bible Version Options', MBSB), 'mbsb_bible_version_options_fn', 'sermon-browser/options');
-	add_settings_field('mbsb_bible_version', __('Bible Version', MBSB), 'mbsb_bible_version_fn', 'mbsb_bible_version_options_section');
-	add_settings_field('mbsb_use_embedded_bible', __('Use embedded bible?', MBSB), 'mbsb_use_embedded_bible_fn', 'mbsb_bible_version_options_section');
-	add_settings_field('mbsb_allow_user_to_change_bible', __('Allow user to change Bible version?', MBSB), 'mbsb_allow_user_to_change_bible_fn', 'mbsb_bible_version_options_section');
-	add_settings_field('mbsb_inactive_bibles', __('Inactive Bibles', MBSB), 'mbsb_inactive_bibles_fn', 'mbsb_bible_version_options_section');
-	add_settings_field('mbsb_inactive_bible_languages', __('Inactive Bible Languages', MBSB), 'mbsb_inactive_bible_languages_fn', 'mbsb_bible_version_options_section');
-	add_settings_field('mbsb_hide_other_language_bibles', __('Hide other language Bibles?', MBSB), 'mbsb_hide_other_lanugage_bibles_fn', 'mbsb_bible_version_options_section');
-	add_settings_field('mbsb_embedded_bible_parameters', __('Embedded Bible Parameters', MBSB), 'mbsb_embedded_bible_parameters_fn', 'mbsb_bible_version_options_section');
-	add_settings_field('mbsb_biblia_api_key', __('Biblia API Key', MBSB), 'mbsb_biblia_api_key_fn', 'mbsb_bible_version_options_section');
-	add_settings_field('mbsb_biblesearch_api_key', __('Biblesearch API Key', MBSB), 'mbsb_biblesearch_api_key_fn', 'mbsb_bible_version_options_section');
-	add_settings_field('mbsb_esv_api_key', __('ESV API Key', MBSB), 'mbsb_esv_api_key_fn', 'mbsb_bible_version_options_section');
-	
+	add_settings_field('mbsb_bible_version', __('Bible Version', MBSB), 'mbsb_bible_version_fn', 'sermon-browser/options', 'mbsb_bible_version_options_section');
+	add_settings_field('mbsb_use_embedded_bible', __('Use embedded bible?', MBSB), 'mbsb_use_embedded_bible_fn', 'sermon-browser/options', 'mbsb_bible_version_options_section');
+	add_settings_field('mbsb_allow_user_to_change_bible', __('Allow user to change Bible version?', MBSB), 'mbsb_allow_user_to_change_bible_fn', 'sermon-browser/options', 'mbsb_bible_version_options_section');
+	add_settings_field('mbsb_inactive_bibles', __('Inactive Bibles', MBSB), 'mbsb_inactive_bibles_fn', 'sermon-browser/options', 'mbsb_bible_version_options_section');
+	add_settings_field('mbsb_inactive_bible_languages', __('Inactive Bible Languages', MBSB), 'mbsb_inactive_bible_languages_fn', 'sermon-browser/options', 'mbsb_bible_version_options_section');
+	add_settings_field('mbsb_hide_other_language_bibles', __('Hide other language Bibles?', MBSB), 'mbsb_hide_other_lanugage_bibles_fn', 'sermon-browser/options', 'mbsb_bible_version_options_section');
+	add_settings_field('mbsb_embedded_bible_parameters', __('Embedded Bible Parameters', MBSB), 'mbsb_embedded_bible_parameters_fn', 'sermon-browser/options', 'mbsb_bible_version_options_section');
+	add_settings_field('mbsb_biblia_api_key', __('Biblia API Key', MBSB), 'mbsb_biblia_api_key_fn', 'sermon-browser/options', 'mbsb_bible_version_options_section');
+	add_settings_field('mbsb_biblesearch_api_key', __('Biblesearch API Key', MBSB), 'mbsb_biblesearch_api_key_fn', 'sermon-browser/options', 'mbsb_bible_version_options_section');
+	add_settings_field('mbsb_esv_api_key', __('ESV API Key', MBSB), 'mbsb_esv_api_key_fn', 'sermon-browser/options', 'mbsb_bible_version_options_section');	
 */
 }
 
@@ -1044,6 +1043,37 @@ function mbsb_video_shortcode_fn() {
 */
 function mbsb_layout_options_fn() {
 	// This is where an explanation would go for the Layout Options section.
+}
+
+/**
+* Frontend Sermon Sections setting input field
+*/
+function mbsb_frontend_sermon_sections_fn() {
+	$default_frontend_sermon_sections = mbsb_get_default_option('frontend_sermon_sections');
+	$frontend_sermon_sections = mbsb_get_option('frontend_sermon_sections', $default_frontend_sermon_sections);
+	$sections = array('main', 'media', 'preacher', 'series', 'passages');
+	$output = '';
+	foreach ($sections as $section) {
+		if (array_search($section, $frontend_sermon_sections)===false) {
+			$checked = '';
+		}
+		else {
+			$checked = 'checked="checked"';
+		}
+		$output .= '<input id="mbsb_frontend_sermon_sections_'.$section.'" name="sermon_browser_2[frontend_sermon_sections_'.$section.']" type="checkbox" value="true" '.$checked.' />';
+		$output .= '<label for="mbsb_frontend_sermon_sections_'.$section.'"> '.__(ucfirst($section), MBSB)."</label><br />\n";
+	}
+	echo $output;
+}
+
+/**
+* Hide Media Heading setting input field
+*/
+function mbsb_hide_media_heading_fn() {
+	$default_hide_media_heading = mbsb_get_default_option('hide_media_heading');
+	$hide_media_heading = mbsb_get_option('hide_media_heading', $default_hide_media_heading);
+	$checked = ($hide_media_heading) ? 'checked="checked"' : '';
+	echo '<input id="mbsb_hide_media_heading" name="sermon_browser_2[hide_media_heading]" type="checkbox" value="true" '.$checked.' />';
 }
 
 /**

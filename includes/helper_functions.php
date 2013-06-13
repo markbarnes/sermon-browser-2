@@ -35,10 +35,10 @@ function mbsb_default_options($all_options=array() ) {
 	//Standard template options
 	$all_options ['frontend_sermon_sections'] = array ('main', 'media', 'preacher', 'series', 'passages');
 	$all_options ['hide_media_heading'] = false;
-	$all_options ['sermon_image'] = 'alignright';
-	$all_options ['preacher_image'] = 'alignright';
-	$all_options ['series_image'] = 'alignright';
-	$all_options ['service_image'] = 'alignright';
+	$all_options ['sermon_image_pos'] = 'alignright';
+	$all_options ['preacher_image_pos'] = 'alignright';
+	$all_options ['series_image_pos'] = 'alignright';
+	$all_options ['service_image_pos'] = 'alignright';
 	$all_options ['color_bar'] = 'black';
 	$all_options ['add_download_links'] = true;
 	//Advanced template options
