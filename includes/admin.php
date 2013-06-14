@@ -984,11 +984,11 @@ function mbsb_options_page_init() {
 	add_settings_section('mbsb_layout_options_section', __('Layout Options', MBSB), 'mbsb_layout_options_fn', 'sermon-browser/options');
 	add_settings_field('mbsb_frontend_sermon_sections', __('Frontend Sermon Sections', MBSB), 'mbsb_frontend_sermon_sections_fn', 'sermon-browser/options', 'mbsb_layout_options_section');
 	add_settings_field('mbsb_hide_media_heading', __('Hide "Media" heading?', MBSB), 'mbsb_hide_media_heading_fn', 'sermon-browser/options', 'mbsb_layout_options_section');
+	add_settings_field('mbsb_sermon_image_pos', __('Sermon Image Position', MBSB), 'mbsb_image_pos_fn', 'sermon-browser/options', 'mbsb_layout_options_section', array('sermon'));
+	add_settings_field('mbsb_preacher_image_pos', __('Preacher Image Position', MBSB), 'mbsb_image_pos_fn', 'sermon-browser/options', 'mbsb_layout_options_section', array('preacher'));
+	add_settings_field('mbsb_series_image_pos', __('Series Image Position', MBSB), 'mbsb_image_pos_fn', 'sermon-browser/options', 'mbsb_layout_options_section', array('series'));
+	//add_settings_field('mbsb_service_image_pos', __('Service Image Position', MBSB), 'mbsb_image_pos_fn', 'sermon-browser/options', 'mbsb_layout_options_section', array('service'));
 /* Functions do not exist yet.  (Ben Miller 6/13/2013)
-	add_settings_field('mbsb_sermon_image_pos', __('Sermon Image Position', MBSB), 'mbsb_sermon_image_pos_fn', 'sermon-browser/options', 'mbsb_layout_options_section');
-	add_settings_field('mbsb_preacher_image_pos', __('Preacher Image Position', MBSB), 'mbsb_preacher_image_pos_fn', 'sermon-browser/options', 'mbsb_layout_options_section');
-	add_settings_field('mbsb_series_image_pos', __('Series Image Position', MBSB), 'mbsb_series_image_pos_fn', 'sermon-browser/options', 'mbsb_layout_options_section');
-	//add_settings_field('mbsb_service_image_pos', __('Service Image Position', MBSB), 'mbsb_service_image_pos_fn', 'sermon-browser/options', 'mbsb_layout_options_section');
 	add_settings_field('mbsb_add_download_links', __('Add download links?', MBSB), 'mbsb_add_download_links_fn', 'sermon-browser/options', 'mbsb_layout_options_section');
 	add_settings_field('mbsb_sermon_image_size', __('Sermon Image Size', MBSB), 'mbsb_sermon_image_size_fn', 'sermon-browser/options', 'mbsb_layout_options_section');
 	add_settings_field('mbsb_preacher_image_size', __('Preacher Image Size', MBSB), 'mbsb_preacher_image_size_fn', 'sermon-browser/options', 'mbsb_layout_options_section');
@@ -1026,7 +1026,7 @@ function mbsb_media_player_options_fn() {
 function mbsb_audio_shortcode_fn() {
 	$default_audio_shortcode = mbsb_get_default_option('audio_shortcode');
 	$audio_shortcode = mbsb_get_option('audio_shortcode', $default_audio_shortcode);
-	echo '<input id="mbsb_audio_shortcode" name="sermon_browser_2[audio_shortcode]" size="40" type="text" value="'.esc_attr($audio_shortcode).'" /> '.__('Default:', MBSB).' <span class="mbsb_default_option">'.$default_audio_shortcode.'</span>';
+	echo '<input id="mbsb_audio_shortcode" name="sermon_browser_2[audio_shortcode]" size="40" type="text" value="'.esc_attr($audio_shortcode).'" /> '.__('Default:', MBSB).' <span class="mbsb_default_option">'.$default_audio_shortcode."</span>\n";
 }
 
 /**
@@ -1035,7 +1035,7 @@ function mbsb_audio_shortcode_fn() {
 function mbsb_video_shortcode_fn() {
 	$default_video_shortcode = mbsb_get_default_option('video_shortcode');
 	$video_shortcode = mbsb_get_option('video_shortcode', $default_video_shortcode);
-	echo '<input id="mbsb_video_shortcode" name="sermon_browser_2[video_shortcode]" size="40" type="text" value="'.esc_attr($video_shortcode).'" /> '.__('Default:', MBSB).' <span class="mbsb_default_option">'.$default_video_shortcode.'</span>';
+	echo '<input id="mbsb_video_shortcode" name="sermon_browser_2[video_shortcode]" size="40" type="text" value="'.esc_attr($video_shortcode).'" /> '.__('Default:', MBSB).' <span class="mbsb_default_option">'.$default_video_shortcode."</span>\n";
 }
 
 /**
@@ -1073,7 +1073,24 @@ function mbsb_hide_media_heading_fn() {
 	$default_hide_media_heading = mbsb_get_default_option('hide_media_heading');
 	$hide_media_heading = mbsb_get_option('hide_media_heading', $default_hide_media_heading);
 	$checked = ($hide_media_heading) ? 'checked="checked"' : '';
-	echo '<input id="mbsb_hide_media_heading" name="sermon_browser_2[hide_media_heading]" type="checkbox" value="true" '.$checked.' />';
+	echo '<input id="mbsb_hide_media_heading" name="sermon_browser_2[hide_media_heading]" type="checkbox" value="true" '.$checked." />\n";
+}
+
+/**
+* Image Position setting input field
+*/
+function mbsb_image_pos_fn($args) {
+	$image_type = $args[0];
+	$default_sermon_image_pos = mbsb_get_default_option('sermon_image_pos');
+	$sermon_image_pos = mbsb_get_option('sermon_image_pos', $default_sermon_image_pos);
+	$positions = array(__('Right', MBSB) => 'alignright', __('Left', MBSB) => 'alignleft', __('Center', MBSB) => 'aligncenter', __('Not Aligned', MBSB) => 'alignnone');
+	$output = '<select id="mbsb_'.$image_type.'_image_pos" name="sermon_browser_2['.$image_type.'_image_pos]">'."\n";
+	foreach ($positions as $position => $style) {
+		$selected = selected($sermon_image_pos, $style, false);
+		$output .= "<option value='$style' $selected>$position</option>\n";
+	}
+	$output .= "</select>\n";
+	echo $output;
 }
 
 /**
