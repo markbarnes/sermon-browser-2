@@ -39,7 +39,6 @@ function mbsb_default_options($all_options=array() ) {
 	$all_options ['preacher_image_pos'] = 'alignright';
 	$all_options ['series_image_pos'] = 'alignright';
 	$all_options ['service_image_pos'] = 'alignright';
-	$all_options ['color_bar'] = 'black';
 	$all_options ['add_download_links'] = true;
 	//Advanced template options
 	$all_options ['sermon_image_size'] = array ('width' => '230', 'height' => '129', 'crop' => false);
@@ -49,18 +48,12 @@ function mbsb_default_options($all_options=array() ) {
 	$all_options ['excerpt_length'] = 55;
 	$all_options ['show_statistics_on_sermon_page'] = true;
 	$all_options ['embedded_bible_parameters'] = array ('width' => '100%', 'height' => '600', 'layout' => 'normal', 'historyButtons' => true, 'navigationBox' => true, 'resourcePicker' => true, 'shareButton' => true, 'textSizeButton' =>true);
+	$all_options ['biblia_api_key'] = '';
+	$all_options ['biblesearch_api_key'] = '';
+	$all_options ['esv_api_key'] = 'IP';
 	//Options still to be implemented
+	$all_options ['color_bar'] = 'black';
 	$all_options ['append_passage_to_title_in_feed'] = true;
-	if (!file_exists(mbsb_plugin_dir_path('includes/api_keys.php'))) {
-		$message = "To test Bible API functionality you should create a file called api_keys.php in the includes folder.<br/><br/>";
-		$message .= "<code>&lt;?php<br/>&nbsp;&nbsp;&nbsp;\$all_options ['biblia_api_key'] = '{insert your API key here}';<br/>&nbsp;&nbsp;&nbsp;\$all_options ['biblesearch_api_key'] = '{insert your API key here}';<br/>&nbsp;&nbsp;&nbsp;\$all_options ['esv_api_key'] = 'IP';</br>?&gt;</code>";
-		$message .= "<ul>";
-		$message .= '<li><a href="http://api.biblia.com/docs/API_Keys">Biblia.com</a></li>';
-		$message .= '<li><a href="http://bibles.org/pages/api/signup">biblesearch.org</a></li>';
-		$message .= '</ul><p>If you cannot get an API key, you can create the file with empty strings, which will then ignore that API service.</p>';
-		wp_die($message);
-	}
-	require ('api_keys.php');
 	return $all_options;
 	
 	/*
