@@ -976,7 +976,7 @@ function mbsb_options_admin_page() {
 * Initialize the options admin page
 */
 function mbsb_options_page_init() {
-	register_setting('sermon_browser_2', 'sermon_browser_2');
+	register_setting('sermon_browser_2', 'sermon_browser_2', 'mbsb_options_validate');
 	add_settings_section('mbsb_media_player_options_section', __('Media Player Options', MBSB), 'mbsb_media_player_options_fn', 'sermon-browser/options');
 	add_settings_field('mbsb_audio_shortcode', __('Audio Shortcode', MBSB), 'mbsb_audio_shortcode_fn', 'sermon-browser/options', 'mbsb_media_player_options_section');
 	add_settings_field('mbsb_video_shortcode', __('Video Shortcode', MBSB), 'mbsb_video_shortcode_fn', 'sermon-browser/options', 'mbsb_media_player_options_section');
@@ -1008,6 +1008,70 @@ function mbsb_options_page_init() {
 	add_settings_field('mbsb_biblia_api_key', __('Biblia API Key', MBSB), 'mbsb_biblia_api_key_fn', 'sermon-browser/options', 'mbsb_bible_api_keys_section');
 	add_settings_field('mbsb_biblesearch_api_key', __('Biblesearch API Key', MBSB), 'mbsb_biblesearch_api_key_fn', 'sermon-browser/options', 'mbsb_bible_api_keys_section');
 	add_settings_field('mbsb_esv_api_key', __('ESV API Key', MBSB), 'mbsb_esv_api_key_fn', 'sermon-browser/options', 'mbsb_bible_api_keys_section');	
+}
+
+/**
+* Validate option input from options admin page
+*
+* Function grabs the existing settings, then checks the input for valid data.  Any setting input that isn't valid will keep the old setting.
+* Settings not on the current options screen will not be lost.
+*/
+function mbsb_options_validate($input) {
+	//wp_die(print_r($input, true));
+	$all_options = get_option('sermon_browser_2', mbsb_default_options() );
+	$all_options['audio_shortcode'] = $input['audio_shortcode'];
+	$all_options['video_shortcode'] = $input['video_shortcode'];
+	$sections = mbsb_list_frontend_sections();
+	$visible_sections = array();
+	foreach ($sections as $section) {
+		if (isset($input['frontend_sermon_sections_'.$section]))
+			array_push($visible_sections, $section);
+	}
+	$all_options['frontend_sermon_sections'] = $visible_sections;
+	if (isset($input['hide_media_heading']))
+		$all_options['hide_media_heading'] = true;
+	else
+		$all_options['hide_media_heading'] = false;
+	$image_classes = array('alignright', 'alignleft', 'aligncenter', 'alignnone');
+	foreach ( array('sermon', 'preacher', 'series') as $imagetype ) {
+		if (array_search($input[$imagetype.'_image_pos'], $image_classes))
+			$all_options[$imagetype.'_image_pos'] = $input[$imagetype.'_image_pos'];
+	}
+	if (isset($input['add_download_links']))
+		$all_options['add_download_links'] = true;
+	else
+		$all_options['add_download_links'] = false;
+	foreach ( array('sermon', 'preacher', 'series') as $imagetype ) {
+		if ( $input[$imagetype.'_image_size_width'] == (int) $input[$imagetype.'_image_size_width'] )
+			$all_options[$imagetype.'_image_size']['width'] = (int) $input[$imagetype.'_image_size_width'];
+		if ( $input[$imagetype.'_image_size_height'] == (int) $input[$imagetype.'_image_size_height'] )
+			$all_options[$imagetype.'_image_size']['height'] = (int) $input[$imagetype.'_image_size_height'];
+		if (isset($input[$imagetype.'_image_size_crop']))
+			$all_options[$imagetype.'_image_size']['crop'] = true;
+		else
+			$all_options[$imagetype.'_image_size']['crop'] = false;
+	}
+	if ( $input['excerpt_length'] == (int) $input['excerpt_length'] )
+		$all_options['excerpt_length'] = (int) $input['excerpt_length'];
+	if (isset($input['show_statistics_on_sermon_page']))
+		$all_options['show_statistics_on_sermon_page'] = true;
+	else
+		$all_options['show_statistics_on_sermon_page'] = false;
+	$locale = get_locale();
+	if (isset($input['bible_version_'.$locale]))
+		$all_options['bible_version_'.$locale] = $input['bible_version_'.$locale];
+	if (isset($input['use_embedded_bible_'.$locale]))
+		$all_options['use_embedded_bible_'.$locale] = true;
+	else
+		$all_options['use_embedded_bible_'.$locale] = false;
+	if (isset($input['allow_user_to_change_bible']))
+		$all_options['allow_user_to_change_bible'] = true;
+	else
+		$all_options['allow_user_to_change_bible'] = false;
+	$all_options['biblia_api_key'] = $input['biblia_api_key'];
+	$all_options['biblesearch_api_key'] = $input['biblesearch_api_key'];
+	$all_options['esv_api_key'] = $input['esv_api_key'];
+	return $all_options;
 }
 
 /**
@@ -1098,7 +1162,7 @@ function mbsb_layout_options_fn() {
 function mbsb_frontend_sermon_sections_fn() {
 	$default_frontend_sermon_sections = mbsb_get_default_option('frontend_sermon_sections');
 	$frontend_sermon_sections = mbsb_get_option('frontend_sermon_sections', $default_frontend_sermon_sections);
-	$sections = array('main', 'media', 'preacher', 'series', 'passages');
+	$sections = mbsb_list_frontend_sections();
 	$output = '';
 	foreach ($sections as $section) {
 		if (array_search($section, $frontend_sermon_sections)===false) {

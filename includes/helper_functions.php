@@ -9,7 +9,7 @@
 */
 
 // Temporary filter whilst the Options Page is being built.
-add_filter ('option_sermon_browser_2', 'mbsb_default_options');
+//add_filter ('option_sermon_browser_2', 'mbsb_default_options');
 add_filter ('default_option_sermon_browser_2', 'mbsb_default_options');
 
 /**
