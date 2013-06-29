@@ -7,7 +7,9 @@
 * @author Mark Barnes <mark@sermonbrowser.com>
 */
 add_action ('admin_init', 'mbsb_admin_init');
-add_action ('admin_init', 'mbsb_options_page_init');
+if (!empty($GLOBALS['pagenow']) and ((($GLOBALS['pagenow'] == 'admin.php') and ($_GET['page'] == 'sermon-browser_options')) or ($GLOBALS['pagenow'] == 'options.php'))) {
+		add_action ('admin_init', 'mbsb_options_page_init');
+}
 
 /**
 * Runs on the admin_init action.
@@ -666,12 +668,12 @@ function mbsb_service_details_meta_box () {
 */
 function mbsb_add_admin_menu() {
 	add_menu_page(__('Sermons', MBSB), __('Sermons', MBSB), 'publish_posts', 'sermon-browser', 'sb_manage_sermons', mbsb_plugins_url('images/icon-16-color.png', __FILE__), 21);
-	add_submenu_page('sermon-browser', __('Files', MBSB), __('Files', MBSB), 'upload_files', 'sermon-browser/files', 'mbsb_files');
-	add_submenu_page('sermon-browser', __('Options', MBSB), __('Options', MBSB), 'manage_options', 'sermon-browser/options', 'mbsb_options_admin_page');
-	add_submenu_page('sermon-browser', __('Templates', MBSB), __('Templates', MBSB), 'manage_options', 'sermon-browser/templates', 'mbsb_templates');
-	add_submenu_page('sermon-browser', __('Uninstall', MBSB), __('Uninstall', MBSB), 'edit_plugins', 'sermon-browser/uninstall', 'mbsb_uninstall');
-	add_submenu_page('sermon-browser', __('Help', MBSB), __('Help', MBSB), 'publish_posts', 'sermon-browser-2/help', 'mbsb_help');
-	add_submenu_page('sermon-browser', __('Pray for Japan', MBSB), __('Pray for Japan', MBSB), 'publish_posts', 'sermon-browser-2/japan', 'mbsb_japan');
+	add_submenu_page('sermon-browser', __('Files', MBSB), __('Files', MBSB), 'upload_files', 'sermon-browser_files', 'mbsb_files');
+	add_submenu_page('sermon-browser', __('Options', MBSB), __('Options', MBSB), 'manage_options', 'sermon-browser_options', 'mbsb_options_admin_page');
+	add_submenu_page('sermon-browser', __('Templates', MBSB), __('Templates', MBSB), 'manage_options', 'sermon-browser_templates', 'mbsb_templates');
+	add_submenu_page('sermon-browser', __('Uninstall', MBSB), __('Uninstall', MBSB), 'edit_plugins', 'sermon-browser_uninstall', 'mbsb_uninstall');
+	add_submenu_page('sermon-browser', __('Help', MBSB), __('Help', MBSB), 'publish_posts', 'sermon-browser_help', 'mbsb_help');
+	add_submenu_page('sermon-browser', __('Pray for Japan', MBSB), __('Pray for Japan', MBSB), 'publish_posts', 'sermon-browser_japan', 'mbsb_japan');
 }
 
 /**
@@ -976,6 +978,7 @@ function mbsb_options_admin_page() {
 * Initialize the options admin page
 */
 function mbsb_options_page_init() {
+	add_option('sermon_browser_2');		//Ensure option exists in database.  If option already exists, add_option() does nothing.
 	register_setting('sermon_browser_2', 'sermon_browser_2', 'mbsb_options_validate');
 	add_settings_section('mbsb_media_player_options_section', __('Media Player Options', MBSB), 'mbsb_media_player_options_fn', 'sermon-browser/options');
 	add_settings_field('mbsb_audio_shortcode', __('Audio Shortcode', MBSB), 'mbsb_audio_shortcode_fn', 'sermon-browser/options', 'mbsb_media_player_options_section');
@@ -1042,9 +1045,9 @@ function mbsb_options_validate($input) {
 	else
 		$all_options['add_download_links'] = false;
 	foreach ( array('sermon', 'preacher', 'series') as $imagetype ) {
-		if ( $input[$imagetype.'_image_size_width'] == (int) $input[$imagetype.'_image_size_width'] )
+		if ( ($input[$imagetype.'_image_size_width'] == (int) $input[$imagetype.'_image_size_width']) and ((int) $input[$imagetype.'_image_size_width'] > 0) )
 			$all_options[$imagetype.'_image_size']['width'] = (int) $input[$imagetype.'_image_size_width'];
-		if ( $input[$imagetype.'_image_size_height'] == (int) $input[$imagetype.'_image_size_height'] )
+		if ( ($input[$imagetype.'_image_size_height'] == (int) $input[$imagetype.'_image_size_height']) and ((int) $input[$imagetype.'_image_size_height'] > 0) )
 			$all_options[$imagetype.'_image_size']['height'] = (int) $input[$imagetype.'_image_size_height'];
 		if (isset($input[$imagetype.'_image_size_crop']))
 			$all_options[$imagetype.'_image_size']['crop'] = true;
@@ -1071,6 +1074,7 @@ function mbsb_options_validate($input) {
 	$all_options['biblia_api_key'] = $input['biblia_api_key'];
 	$all_options['biblesearch_api_key'] = $input['biblesearch_api_key'];
 	$all_options['esv_api_key'] = $input['esv_api_key'];
+	//wp_die(print_r($all_options, true));
 	return $all_options;
 }
 
