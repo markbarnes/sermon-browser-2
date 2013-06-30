@@ -21,37 +21,38 @@ add_filter ('default_option_sermon_browser_2', 'mbsb_default_options');
 * @return array
 */
 function mbsb_default_options($all_options=array() ) {
-	//Standard options
+	//Media Player Options
 	$all_options ['audio_shortcode'] = '[audio src="%URL%"]';
 	$all_options ['video_shortcode'] = '[video src="%URL%"]';
-	$all_options ['bible_version_'.get_locale()] = 'esv';
-	$all_options ['use_embedded_bible_'.get_locale()] = false;
-	$all_options ['allow_user_to_change_bible'] = true;
-	//Advanced options
-	$all_options ['inactive_bibles'] = array ('emphbbl', 'elberfelder', 'ostervald', 'bibelselskap', 'croatia', 'newvulgate', 'esperanto', 'manxgaelic', 'aleppo', 'turkish', 'afrikaans', 'amharic', 'scotsgaelic', 'bohairic', 'georgian', 'schlachter', 'rv1858', 'danish', 'tamajaq', 'peshitta', 'coptic', 'chamorro', 'kabyle', 'ukranian', 'turkish', 'martin', 'makarij', 'nkb', 'kms', 'bkr', 'vulgate', 'sagradas', 'modernhebrew', 'easternarmenian', 'estonian', 'albanian', 'wolof', 'pyharaamattu', 'finnish1776', 'zhuromsky', 'gothic', 'sahidic', 'moderngreek', 'breton', 'westernarmenian', 'uma', 'elberfelder1905', 'latvian', 'xhosa', 'swedish', 'riveduta', 'basque', 'judson', 'lithuanian', 'giovanni', 'thai', 'tischendorf', 'tagalog', 'pyharaamattu1933', 'vietnamese', 'web', 'hnv');
-	$all_options ['inactive_bible_languages'] = array('kor', 'rum');
-	$all_options ['hide_other_language_bibles'] = false;
-	$all_options ['add_all_types_to_admin_bar'] = false;
-	//Standard template options
+	//Layout Options
 	$all_options ['frontend_sermon_sections'] = array ('main', 'media', 'preacher', 'series', 'passages');
 	$all_options ['hide_media_heading'] = false;
 	$all_options ['sermon_image_pos'] = 'alignright';
 	$all_options ['preacher_image_pos'] = 'alignright';
 	$all_options ['series_image_pos'] = 'alignright';
-	$all_options ['service_image_pos'] = 'alignright';
 	$all_options ['add_download_links'] = true;
-	//Advanced template options
 	$all_options ['sermon_image_size'] = array ('width' => '230', 'height' => '129', 'crop' => false);
 	$all_options ['preacher_image_size'] = array ('width' => '150', 'height' => '150', 'crop' => true);
 	$all_options ['series_image_size'] = array ('width' => '150', 'height' => '150', 'crop' => true);
-	$all_options ['service_image_size'] = array ('width' => '150', 'height' => '150', 'crop' => true);
 	$all_options ['excerpt_length'] = 55;
 	$all_options ['show_statistics_on_sermon_page'] = true;
-	$all_options ['embedded_bible_parameters'] = array ('width' => '100%', 'height' => '600', 'layout' => 'normal', 'historyButtons' => true, 'navigationBox' => true, 'resourcePicker' => true, 'shareButton' => true, 'textSizeButton' =>true);
+	//Bible Version Options
+	$all_options ['bible_version_'.get_locale()] = 'esv';
+	$all_options ['use_embedded_bible_'.get_locale()] = false;
+	$all_options ['allow_user_to_change_bible'] = true;
+	//Bible API Keys
 	$all_options ['biblia_api_key'] = '';
 	$all_options ['biblesearch_api_key'] = '';
 	$all_options ['esv_api_key'] = 'IP';
+	//Advanced options (not currently shown on Options screen
+	$all_options ['inactive_bibles'] = array ('emphbbl', 'elberfelder', 'ostervald', 'bibelselskap', 'croatia', 'newvulgate', 'esperanto', 'manxgaelic', 'aleppo', 'turkish', 'afrikaans', 'amharic', 'scotsgaelic', 'bohairic', 'georgian', 'schlachter', 'rv1858', 'danish', 'tamajaq', 'peshitta', 'coptic', 'chamorro', 'kabyle', 'ukranian', 'turkish', 'martin', 'makarij', 'nkb', 'kms', 'bkr', 'vulgate', 'sagradas', 'modernhebrew', 'easternarmenian', 'estonian', 'albanian', 'wolof', 'pyharaamattu', 'finnish1776', 'zhuromsky', 'gothic', 'sahidic', 'moderngreek', 'breton', 'westernarmenian', 'uma', 'elberfelder1905', 'latvian', 'xhosa', 'swedish', 'riveduta', 'basque', 'judson', 'lithuanian', 'giovanni', 'thai', 'tischendorf', 'tagalog', 'pyharaamattu1933', 'vietnamese', 'web', 'hnv');
+	$all_options ['inactive_bible_languages'] = array('kor', 'rum');
+	$all_options ['hide_other_language_bibles'] = false;
+	$all_options ['add_all_types_to_admin_bar'] = false;
+	$all_options ['embedded_bible_parameters'] = array ('width' => '100%', 'height' => '600', 'layout' => 'normal', 'historyButtons' => true, 'navigationBox' => true, 'resourcePicker' => true, 'shareButton' => true, 'textSizeButton' =>true);
 	//Options still to be implemented
+	$all_options ['service_image_pos'] = 'alignright';
+	$all_options ['service_image_size'] = array ('width' => '150', 'height' => '150', 'crop' => true);
 	$all_options ['color_bar'] = 'black';
 	$all_options ['append_passage_to_title_in_feed'] = true;
 	return $all_options;

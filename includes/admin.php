@@ -1080,7 +1080,6 @@ function mbsb_options_validate($input) {
 	$all_options['biblia_api_key'] = $input['biblia_api_key'];
 	$all_options['biblesearch_api_key'] = $input['biblesearch_api_key'];
 	$all_options['esv_api_key'] = $input['esv_api_key'];
-	//wp_die(print_r($all_options, true));
 	return $all_options;
 }
 
