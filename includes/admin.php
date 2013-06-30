@@ -967,7 +967,9 @@ function mbsb_options_admin_page() {
 		<?php settings_fields('sermon_browser_2'); ?>
 		<?php do_settings_sections('sermon-browser/options'); ?>
 		<p class="submit">
-			<input name="Submit" type="submit" class="button-primary" value="<?php esc_attr_e('Save Changes', MBSB); ?>" />
+			<input name="sermon_browser_2[submit]" type="submit" class="button-primary" value="<?php esc_attr_e('Save Changes', MBSB); ?>" />
+			<input name="sermon_browser_2[reset]" type="submit" class="button-secondary" value="<?php esc_attr_e('Reset to Defaults', MBSB); ?>" 
+			onclick="if(!confirm('<?php esc_attr_e('Are you sure you want to reset all Sermon Browser options to defaults?', MBSB); ?>')){return false;}" />
 		</p>
 		</form>
 	</div><!-- /.wrap -->
@@ -1020,8 +1022,12 @@ function mbsb_options_page_init() {
 * Settings not on the current options screen will not be lost.
 */
 function mbsb_options_validate($input) {
-	//wp_die(print_r($input, true));
+	// Check for reset button press, return defaults
+	if (isset($input['reset']))
+		return mbsb_default_options();
+	// Get current options from database to use as starting point
 	$all_options = get_option('sermon_browser_2', mbsb_default_options() );
+	// Validate and save each option from the form
 	$all_options['audio_shortcode'] = $input['audio_shortcode'];
 	$all_options['video_shortcode'] = $input['video_shortcode'];
 	$sections = mbsb_list_frontend_sections();
