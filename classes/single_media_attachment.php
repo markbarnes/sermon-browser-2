@@ -19,7 +19,7 @@
 class mbsb_single_media_attachment {
 	
 	/**
-	* The type of attachment this is, i.e. 'library', 'url', or 'embed'
+	* The type of attachment this is, i.e. 'library', 'url', 'embed', or 'legacy'
 	* 
 	* @var string
 	*/
@@ -47,7 +47,7 @@ class mbsb_single_media_attachment {
 	*/
 	public function __construct ($meta_id) {
 		$data = get_metadata_by_mid('post', $meta_id);
-		if (!$data || $data->meta_key != 'attachments' || !isset($data->meta_value['type']) || !in_array($data->meta_value['type'], array ('library', 'url', 'embed')))
+		if (!$data || $data->meta_key != 'attachments' || !isset($data->meta_value['type']) || !in_array($data->meta_value['type'], array ('library', 'url', 'embed', 'legacy')))
 			$this->present = false;
 		else {
 			$this->attachment_type = $data->meta_value ['type'];
@@ -68,7 +68,7 @@ class mbsb_single_media_attachment {
 	}
 	
 	/**
-	* Returns the type of attachment ('library', 'url' or 'embed')
+	* Returns the type of attachment ('library', 'url', 'embed', or 'legacy')
 	* 
 	* @return string
 	*/
