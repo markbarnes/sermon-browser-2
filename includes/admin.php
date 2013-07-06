@@ -985,6 +985,7 @@ function mbsb_options_page_init() {
 	add_settings_section('mbsb_media_player_options_section', __('Media Player Options', MBSB), 'mbsb_media_player_options_fn', 'sermon-browser/options');
 	add_settings_field('mbsb_audio_shortcode', __('Audio Shortcode', MBSB), 'mbsb_audio_shortcode_fn', 'sermon-browser/options', 'mbsb_media_player_options_section');
 	add_settings_field('mbsb_video_shortcode', __('Video Shortcode', MBSB), 'mbsb_video_shortcode_fn', 'sermon-browser/options', 'mbsb_media_player_options_section');
+	add_settings_field('mbsb_legacy_upload_folder', __('Upload Folder (Legacy)', MBSB), 'mbsb_legacy_upload_folder_fn', 'sermon-browser/options', 'mbsb_media_player_options_section');
 	add_settings_section('mbsb_layout_options_section', __('Layout Options', MBSB), 'mbsb_layout_options_fn', 'sermon-browser/options');
 	add_settings_field('mbsb_frontend_sermon_sections', __('Frontend Sermon Sections', MBSB), 'mbsb_frontend_sermon_sections_fn', 'sermon-browser/options', 'mbsb_layout_options_section');
 	add_settings_field('mbsb_hide_media_heading', __('Hide "Media" heading?', MBSB), 'mbsb_hide_media_heading_fn', 'sermon-browser/options', 'mbsb_layout_options_section');
@@ -1030,6 +1031,7 @@ function mbsb_options_validate($input) {
 	// Validate and save each option from the form
 	$all_options['audio_shortcode'] = $input['audio_shortcode'];
 	$all_options['video_shortcode'] = $input['video_shortcode'];
+	$all_options['legacy_upload_folder'] = $input['legacy_upload_folder'];
 	$sections = mbsb_list_frontend_sections();
 	$visible_sections = array();
 	foreach ($sections as $section) {
@@ -1108,6 +1110,15 @@ function mbsb_video_shortcode_fn() {
 	$default_video_shortcode = mbsb_get_default_option('video_shortcode');
 	$video_shortcode = mbsb_get_option('video_shortcode', $default_video_shortcode);
 	echo '<input id="mbsb_video_shortcode" name="sermon_browser_2[video_shortcode]" size="40" type="text" value="'.esc_attr($video_shortcode).'" /> '.__('Default:', MBSB).' <span class="mbsb_default_option">'.$default_video_shortcode."</span>\n";
+}
+
+/**
+* Legacy Upload Folder setting input field
+*/
+function mbsb_legacy_upload_folder_fn() {
+	$default_legacy_upload_folder = mbsb_get_default_option('legacy_upload_folder');
+	$legacy_upload_folder = mbsb_get_option('legacy_upload_folder', $default_legacy_upload_folder);
+	echo '<input id="mbsb_legacy_upload_folder" name="sermon_browser_2[legacy_upload_folder]" size="40" type="text" value="'.esc_attr($legacy_upload_folder).'" /> '.__('Default:', MBSB).' <span class="mbsb_default_option">'.$default_legacy_upload_folder."</span>\n";
 }
 
 /**

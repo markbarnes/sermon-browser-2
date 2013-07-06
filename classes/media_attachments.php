@@ -160,6 +160,25 @@ class mbsb_media_attachments extends mbsb_mpspss_template {
 	}
 	
 	/**
+	* Adds a Legacy file attachment to a sermon
+	*
+	* @param string $filename
+	* @return mixed False for failure.  Null if the file is not found.  The media_attachment object if successful.
+	*/
+	public function add_legacy_attachment ($filename) {
+		$absolute_file_path = trailingslashit(path_join(get_home_path(), mbsb_get_option('legacy_upload_folder'))).$filename;
+		if (!is_file($absolute_file_path))
+			return null;
+		else {
+			$metadata = array('type' => 'legacy', 'filename' => $filename);
+			if ($meta_id = add_post_meta ($this->sermon_id, 'attachments', $metadata))
+				return new mbsb_single_media_attachment($meta_id);
+			else
+				return false;
+		}
+	}
+	
+	/**
 	* Adds an embed to a sermon
 	*  
 	* @param string $embed
