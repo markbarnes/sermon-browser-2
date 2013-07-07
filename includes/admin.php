@@ -8,7 +8,7 @@
 */
 add_action ('admin_init', 'mbsb_admin_init');
 if (!empty($GLOBALS['pagenow']) and ((($GLOBALS['pagenow'] == 'admin.php') and ($_GET['page'] == 'sermon-browser_options')) or ($GLOBALS['pagenow'] == 'options.php'))) {
-		add_action ('admin_init', 'mbsb_options_page_init');
+	add_action ('admin_init', 'mbsb_options_page_init');
 }
 
 /**
@@ -103,8 +103,11 @@ function mbsb_onload_edit_page () {
 */
 function mbsb_onload_post_page () {
 	$screen = get_current_screen();
-	if (substr($screen->post_type, 0, 5) == 'mbsb_')
+	if (substr($screen->post_type, 0, 5) == 'mbsb_') {
 		add_filter ("get_user_option_meta-box-order_{$screen->post_type}", 'mbsb_set_default_metabox_sort_order', 10, 3);
+		wp_enqueue_script('mbsb_jqueryFileTree_js', mbsb_plugins_url('lib/jqueryFileTree/jqueryFileTree.js'), array('jquery'), '1.01');
+		wp_enqueue_style('mbsb_jqueryFileTree_css', mbsb_plugins_url('lib/jqueryFileTree/jqueryFileTree.css'), false, '1.01');
+	}
 	add_action ('admin_enqueue_scripts', 'mbsb_add_javascript_and_styles_to_admin_pages');
 	if (isset($_GET['message']))
 		add_filter ('post_updated_messages', 'mbsb_post_updated_messages');
@@ -612,7 +615,8 @@ function mbsb_sermon_media_meta_box() {
 					'upload' => array ('label' => __('Upload a new file', MBSB), 'div' => '<div id="upload-select" style="display:none"><input type="button" value="'.__('Select file', MBSB).'" class="button-secondary" id="mbsb_upload_media_button" name="mbsb_upload_media_button"></div>'),
 					'insert' => array ('label' => __('Insert from the Media Library', MBSB), 'div' => '<div id="insert-select" style="display:none"><input type="button" value="'.__('Insert item', MBSB).'" class="button-secondary" id="mbsb_insert_media_button" name="mbsb_insert_media_button"></div>'),
 					'url' => array ('label' => __('Enter an external URL', MBSB), 'div' => '<div id="url-select" style="display:none"><input type="text" name="mbsb_input_url" id="mbsb_input_url" size="30"/><input type="button" value="'.__('Attach', MBSB).'" class="button-secondary" id="mbsb_attach_url_button" name="mbsb_attach_url_button"></div>'),
-					'embed' => array ('label' => __('Enter an embed code', MBSB), 'div' => '<div id="embed-select" style="display:none"><input type="text" name="mbsb_input_embed" id="mbsb_input_embed" size="60"/><input type="button" value="'.__('Attach', MBSB).'" class="button-secondary" id="mbsb_attach_embed_button" name="mbsb_attach_embed_button"></div>')
+					'embed' => array ('label' => __('Enter an embed code', MBSB), 'div' => '<div id="embed-select" style="display:none"><input type="text" name="mbsb_input_embed" id="mbsb_input_embed" size="60"/><input type="button" value="'.__('Attach', MBSB).'" class="button-secondary" id="mbsb_attach_embed_button" name="mbsb_attach_embed_button"></div>'),
+					'legacy' => array ('label' => __('Choose a file', MBSB), 'div' => '<div id="legacy-select" style="display:none"><div id="legacy_file_tree"></div><input type="button" value="'.__('Attach', MBSB).'" class="button-secondary" id="mbsb_attach_legacy_button" name="mbsb_attach_legacy_button"></div>')
 					);
 	$types = apply_filters ('mbsb_add_media_types', $types);
 	foreach ($types as $type => $data)
