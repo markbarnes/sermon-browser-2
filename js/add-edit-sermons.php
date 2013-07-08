@@ -41,6 +41,7 @@ function mbsb_hide_all() {
 	jQuery('#insert-select').hide();
 	jQuery('#url-select').hide();
 	jQuery('#embed-select').hide();
+	jQuery('#legacy-select').hide();
 }
 
 function add_new_select (post_type, option_name, option_id) {
@@ -173,6 +174,15 @@ jQuery(document).ready(function($) {
 	$('.add-date-picker').datepicker({
 		dateFormat : 'yy-mm-dd'
 	});
+	//Add the File Tree
+	/*
+	$('#legacy_file_tree').fileTree({ 
+		root: '<?php //trailingslashit(get_home_path()).mbsb_get_option('legacy_upload_folder'); ?>',
+		function(file) {
+			alert(file);
+		});
+	});
+	*/
 <?php
 		$post_types = array ('preacher' => esc_js(__('Add a new preacher', MBSB)), 'series' => esc_js(__('Add a new series', MBSB)), 'service' => esc_js(__('Add a new service', MBSB)));
 		foreach ($post_types as $post_type => $add_message) {

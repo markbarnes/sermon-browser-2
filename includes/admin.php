@@ -1035,7 +1035,7 @@ function mbsb_options_validate($input) {
 	// Validate and save each option from the form
 	$all_options['audio_shortcode'] = $input['audio_shortcode'];
 	$all_options['video_shortcode'] = $input['video_shortcode'];
-	$all_options['legacy_upload_folder'] = $input['legacy_upload_folder'];
+	$all_options['legacy_upload_folder'] = trailingslashit(ltrim($input['legacy_upload_folder'], '/'));
 	$sections = mbsb_list_frontend_sections();
 	$visible_sections = array();
 	foreach ($sections as $section) {

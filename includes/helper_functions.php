@@ -24,7 +24,7 @@ function mbsb_default_options($all_options=array() ) {
 	//Media Player Options
 	$all_options ['audio_shortcode'] = '[audio src="%URL%"]';
 	$all_options ['video_shortcode'] = '[video src="%URL%"]';
-	$all_options ['legacy_upload_folder'] = 'wp-content/uploads/sermons';
+	$all_options ['legacy_upload_folder'] = 'wp-content/uploads/sermons/';
 	//Layout Options
 	$all_options ['frontend_sermon_sections'] = array ('main', 'media', 'preacher', 'series', 'passages');
 	$all_options ['hide_media_heading'] = false;
