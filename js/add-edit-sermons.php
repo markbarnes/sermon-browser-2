@@ -175,14 +175,13 @@ jQuery(document).ready(function($) {
 		dateFormat : 'yy-mm-dd'
 	});
 	//Add the File Tree
-	/*
 	$('#legacy_file_tree').fileTree({ 
-		root: '<?php //trailingslashit(get_home_path()).mbsb_get_option('legacy_upload_folder'); ?>',
+			root: '<?php echo trailingslashit(mbsb_get_home_path()).mbsb_get_option('legacy_upload_folder'); ?>'
+		},
 		function(file) {
 			alert(file);
-		});
-	});
-	*/
+		}
+	);
 <?php
 		$post_types = array ('preacher' => esc_js(__('Add a new preacher', MBSB)), 'series' => esc_js(__('Add a new series', MBSB)), 'service' => esc_js(__('Add a new service', MBSB)));
 		foreach ($post_types as $post_type => $add_message) {
