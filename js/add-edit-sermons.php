@@ -141,6 +141,11 @@ jQuery(document).ready(function($) {
 		mbsb_handle_url_embed ('embed');
 		return false;
 	});
+	//Watch for the legacy button being clicked
+	$('#mbsb_attach_legacy_button').click(function() {
+		tb_show('<?php _e('Choose a file from the legacy upload folder for this sermon', MBSB);?>', '#TB_inline?width=600&height=550&inlineId=legacy_file_tree', false);
+		return false;
+	});	
 	//Watch for the unattach button being clicked
 	$('table#mbsb_attached_files').on('click', 'a.unattach', function (e) {
 		var data = {
@@ -176,7 +181,9 @@ jQuery(document).ready(function($) {
 	});
 	//Add the File Tree
 	$('#legacy_file_tree').fileTree({ 
-			root: '<?php echo trailingslashit(mbsb_get_home_path()).mbsb_get_option('legacy_upload_folder'); ?>'
+			root: '<?php echo trailingslashit(mbsb_get_home_path()).mbsb_get_option('legacy_upload_folder'); ?>',
+			script: '<?php echo mbsb_plugins_url('lib/jqueryFileTree/jqueryFileTree.php'); ?>',
+			multiFolder: false
 		},
 		function(file) {
 			alert(file);

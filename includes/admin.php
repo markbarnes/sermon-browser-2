@@ -616,7 +616,7 @@ function mbsb_sermon_media_meta_box() {
 					'insert' => array ('label' => __('Insert from the Media Library', MBSB), 'div' => '<div id="insert-select" style="display:none"><input type="button" value="'.__('Insert item', MBSB).'" class="button-secondary" id="mbsb_insert_media_button" name="mbsb_insert_media_button"></div>'),
 					'url' => array ('label' => __('Enter an external URL', MBSB), 'div' => '<div id="url-select" style="display:none"><input type="text" name="mbsb_input_url" id="mbsb_input_url" size="30"/><input type="button" value="'.__('Attach', MBSB).'" class="button-secondary" id="mbsb_attach_url_button" name="mbsb_attach_url_button"></div>'),
 					'embed' => array ('label' => __('Enter an embed code', MBSB), 'div' => '<div id="embed-select" style="display:none"><input type="text" name="mbsb_input_embed" id="mbsb_input_embed" size="60"/><input type="button" value="'.__('Attach', MBSB).'" class="button-secondary" id="mbsb_attach_embed_button" name="mbsb_attach_embed_button"></div>'),
-					'legacy' => array ('label' => __('Choose a file', MBSB), 'div' => '<div id="legacy-select" style="display:none"><div id="legacy_file_tree"></div><input type="button" value="'.__('Attach', MBSB).'" class="button-secondary" id="mbsb_attach_legacy_button" name="mbsb_attach_legacy_button"></div>')
+					'legacy' => array ('label' => __('Choose a file from legacy upload folder', MBSB), 'div' => '<div id="legacy-select" style="display:none"><input type="button" value="'.__('Select file', MBSB).'" class="button-secondary" id="mbsb_attach_legacy_button" name="mbsb_attach_legacy_button"></div>')
 					);
 	$types = apply_filters ('mbsb_add_media_types', $types);
 	foreach ($types as $type => $data)
@@ -626,6 +626,10 @@ function mbsb_sermon_media_meta_box() {
 		echo $data ['div'];
 	echo '</td></tr>';
 	echo '</table>';
+	// temp test for jqueryfiletree
+	echo '<style type="text/css">#legacy_file_tree {width: 200px; height: 400px; border-top: solid 1px #BBB; border-left: solid 1px #BBB; border-right: solid 1px #FFF; border-bottom: solid 1px #FFF; border-right: solid 1px #FFF; background: #FFF; overflow: scroll; padding: 5px;}</style>', "\n";
+	echo '<div style="display:none;" id="legacy_file_tree"></div>', "\n";
+	// end temp test for jqueryfiletree
 	echo '<table id="mbsb_attached_files" cellspacing="0" class="wp-list-table widefat fixed media">';
 	$sermon = new mbsb_sermon($post->ID);
 	$attachments = $sermon->attachments->get_attachments(false);
