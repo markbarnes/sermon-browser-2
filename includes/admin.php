@@ -42,6 +42,7 @@ function mbsb_admin_init () {
 	add_action ('wp_ajax_nopriv_mbsb_get_service_details', 'mbsb_ajax_mbsb_get_service_details');
 	add_action ('wp_ajax_mbsb_get_series_details', 'mbsb_ajax_mbsb_get_series_details');
 	add_action ('wp_ajax_nopriv_mbsb_get_series_details', 'mbsb_ajax_mbsb_get_series_details');
+	add_action ('wp_ajax_mbsb_jqueryFileTree', 'mbsb_ajax_jqueryFileTree');
 	// Quick editing a custom post_type?
 	if (isset($_POST['action']) && $_POST['action'] == 'inline-save' && substr($_POST['post_type'], 0, 5) == 'mbsb_') {
 		$mbsb_post_type = substr($_POST['post_type'], 5);
@@ -552,6 +553,36 @@ function mbsb_ajax_attach_url_embed() {
 			echo mbsb_single_media_attachment::get_json_attachment_row(false, __('There was an error attaching that URL to the sermon.', MBSB));
 		else
 			echo $result->get_json_attachment_row();
+	}
+	die();
+}
+
+/**
+* Handles the mbsb_ajax_jqueryFileTree AJAX request, the connector script for the legacy file picker
+*/
+function mbsb_ajax_jqueryFileTree() {
+	$root='';
+	$_POST['dir'] = urldecode($_POST['dir']);
+	if( file_exists($root . $_POST['dir']) ) {
+		$files = scandir($root . $_POST['dir']);
+		natcasesort($files);
+		if( count($files) > 2 ) { /* The 2 accounts for . and .. */
+			echo "<ul class=\"jqueryFileTree\" style=\"display: none;\">";
+			// All dirs
+			foreach( $files as $file ) {
+				if( file_exists($root . $_POST['dir'] . $file) && $file != '.' && $file != '..' && is_dir($root . $_POST['dir'] . $file) ) {
+					echo "<li class=\"directory collapsed\"><a href=\"#\" rel=\"" . htmlentities($_POST['dir'] . $file) . "/\">" . htmlentities($file) . "</a></li>";
+				}
+			}
+			// All files
+			foreach( $files as $file ) {
+				if( file_exists($root . $_POST['dir'] . $file) && $file != '.' && $file != '..' && !is_dir($root . $_POST['dir'] . $file) ) {
+					$ext = preg_replace('/^.*\./', '', $file);
+					echo "<li class=\"file ext_$ext\"><a href=\"#\" rel=\"" . htmlentities($_POST['dir'] . $file) . "\">" . htmlentities($file) . "</a></li>";
+				}
+			}
+			echo "</ul>";	
+		}
 	}
 	die();
 }

@@ -182,7 +182,8 @@ jQuery(document).ready(function($) {
 	//Add the File Tree
 	$('#legacy_file_tree').fileTree({ 
 			root: '<?php echo trailingslashit(mbsb_get_home_path()).mbsb_get_option('legacy_upload_folder'); ?>',
-			script: '<?php echo mbsb_plugins_url('lib/jqueryFileTree/jqueryFileTree.php'); ?>',
+			script: ajaxurl,
+			_wpnonce: '<?php echo wp_create_nonce('mbsb_jqueryFileTree') ?>',
 			multiFolder: false
 		},
 		function(file) {
