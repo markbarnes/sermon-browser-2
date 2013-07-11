@@ -561,6 +561,8 @@ function mbsb_ajax_attach_url_embed() {
 * Handles the mbsb_ajax_jqueryFileTree AJAX request, the connector script for the legacy file picker
 */
 function mbsb_ajax_jqueryFileTree() {
+	if (!check_ajax_referer ("mbsb_jqueryFileTree"))
+		die ('Suspicious behaviour blocked');
 	$root='';
 	$_POST['dir'] = urldecode($_POST['dir']);
 	if( file_exists($root . $_POST['dir']) ) {

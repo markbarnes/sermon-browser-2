@@ -143,7 +143,7 @@ jQuery(document).ready(function($) {
 	});
 	//Watch for the legacy button being clicked
 	$('#mbsb_attach_legacy_button').click(function() {
-		tb_show('<?php _e('Choose a file from the legacy upload folder for this sermon', MBSB);?>', '#TB_inline?width=600&height=550&inlineId=legacy_file_tree', false);
+		tb_show('<?php _e('Choose a file from the legacy upload folder for this sermon', MBSB);?>', '#TB_inline?inlineId=legacy_file_tree', false);
 		return false;
 	});	
 	//Watch for the unattach button being clicked
