@@ -248,7 +248,8 @@ class mbsb_single_media_attachment {
 					$url['host'] = $a;
 			}
 			return __('Embed code', MBSB).' ('.$url['host'].')';
-		}
+		} elseif ($this->attachment_type == 'legacy')
+			return basename($this->data['filename']);
 	}
 	
 	/**
@@ -362,6 +363,27 @@ class mbsb_single_media_attachment {
 		$output .= "<img class=\"attachment-46x60 thumbnail\" width=\"46\" height=\"60\" alt=\"".esc_html($title).'" title="'.esc_html($title).'" src="'.wp_mime_type_icon ('interactive').'">';
 		$output .= '<table class="mbsb_media_detail"><tr><th scope="row">'.__('Code', MBSB).':</th><td>'.esc_html($embed_array['code']).'</td></tr>';
 		$output .= '<tr><th scope="row">'.__('Attachment date', MBSB).':</th><td>'.mysql2date (get_option('date_format'), $embed_array['date_time']).'</td></tr></table>';
+		$output .= '</td></tr>';
+		return $output;
+	}
+	
+	/**
+	* Returns a legacy attachment row, ready to be inserted in a table displaying a list of media items
+	*
+	* @param string $class - a CSS class to be added to the row
+	* @return string
+	*/
+	private function add_admin_legacy_attachment_row ($class = '') {
+		$legacy_array = $this->data;
+		$insert = $class ? "  class=\"{$class}\"" : '';
+		$actions = apply_filters ('mbsb_attachment_row_actions', '');
+		$title = $this->get_name();
+		$output  = "<tr><td id=\"row_{$this->meta_id}\"{$insert} style=\"width:100%\"><h3>".esc_html($title).'</h3>';
+		if ($actions)
+			$output .= "<span class=\"attachment_actions\" id=\"unattach_row_{$this->meta_id}\">{$actions}</span>";
+		$output .= "<img class=\"attachment-46x60 thumbnail\" width=\"46\" height=\"60\" alt=\"".esc_html($title).'" title="'.esc_html($title).'" src="'.wp_mime_type_icon ($this->get_mime_type()).'">';
+		$output .= '<table class="mbsb_media_detail"><tr><th scope="row">'.__('Filename', MBSB).':</th><td>'.esc_html($legacy_array['filename']).'</td></tr>';
+		$output .= '<tr><th scope="row">'.__('Attachment date', MBSB).':</th><td>'.mysql2date (get_option('date_format'), $legacy_array['date_time']).'</td></tr></table>';
 		$output .= '</td></tr>';
 		return $output;
 	}

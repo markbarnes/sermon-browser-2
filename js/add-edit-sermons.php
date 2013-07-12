@@ -99,6 +99,23 @@ function mbsb_handle_url_embed (type) {
 		jQuery('#row_'+row_id).show(1200);
 	});
 }
+/**
+* Handle a legacy attachment
+*/
+function mbsb_handle_legacy (file) {
+	var data = {
+		action: 'mbsb_attach_legacy',
+		attachment: file,
+		_wpnonce: '<?php echo wp_create_nonce("mbsb_handle_legacy") ?>',
+		post_id: mbsb_sermon_id
+	};
+	jQuery.post(ajaxurl, data, function(response) {
+		response = JSON.parse (response);
+		row_id = response.row_id; 
+		jQuery('#mbsb_attached_files').append(response.code);
+		jQuery('#row_'+row_id).show(1200);
+	});
+}
 <?php do_action ('mbsb_add_edit_sermon_javascript'); ?>
 
 /**
@@ -181,13 +198,13 @@ jQuery(document).ready(function($) {
 	});
 	//Add the File Tree
 	$('#legacy_file_tree').fileTree({ 
-			root: '<?php echo trailingslashit(mbsb_get_home_path()).mbsb_get_option('legacy_upload_folder'); ?>',
+			root: '',
 			script: ajaxurl,
 			_wpnonce: '<?php echo wp_create_nonce('mbsb_jqueryFileTree') ?>',
 			multiFolder: false
 		},
 		function(file) {
-			alert(file);
+			mbsb_handle_legacy(file);
 		}
 	);
 <?php

@@ -33,6 +33,7 @@ function mbsb_admin_init () {
 	// Ajax API calls
 	add_action ('wp_ajax_mbsb_attachment_insert', 'mbsb_ajax_attachment_insert');
 	add_action ('wp_ajax_mbsb_attach_url_embed', 'mbsb_ajax_attach_url_embed');
+	add_action ('wp_ajax_mbsb_attach_legacy', 'mbsb_ajax_attach_legacy');
 	add_action ('wp_ajax_mbsb_remove_attachment', 'mbsb_ajax_mbsb_remove_attachment');
 	add_action ('wp_ajax_mbsb_get_bible_text', 'mbsb_ajax_mbsb_get_bible_text');
 	add_action ('wp_ajax_nopriv_mbsb_get_bible_text', 'mbsb_ajax_mbsb_get_bible_text');
@@ -558,12 +559,30 @@ function mbsb_ajax_attach_url_embed() {
 }
 
 /**
+* Handles the mbsb_ajax_attach_legacy AJAX request, which adds a legacy attachment
+*/
+function mbsb_ajax_attach_legacy() {
+	if (!check_ajax_referer ('mbsb_handle_legacy'))
+		die ('Suspicious behaviour blocked');
+	$sermon = new mbsb_sermon($_POST['post_id']);
+	add_filter ('mbsb_attachment_row_actions', 'mbsb_add_admin_attachment_row_actions');
+	$result = $sermon->attachments->add_legacy_attachment ($_POST['attachment']);
+	if ($result === null)
+		echo mbsb_single_media_attachment::get_json_attachment_row(false, __('That file was not found.', MBSB));
+	elseif ($result === FALSE)
+		echo mbsb_single_media_attachment::get_json_attachment_row(false, __('There was an error attaching that file to the sermon.', MBSB));
+	else
+		echo $result->get_json_attachment_row();
+	die();
+}
+
+/**
 * Handles the mbsb_ajax_jqueryFileTree AJAX request, the connector script for the legacy file picker
 */
 function mbsb_ajax_jqueryFileTree() {
 	if (!check_ajax_referer ("mbsb_jqueryFileTree"))
 		die ('Suspicious behaviour blocked');
-	$root='';
+	$root = trailingslashit(mbsb_get_home_path()).mbsb_get_option('legacy_upload_folder');
 	$_POST['dir'] = urldecode($_POST['dir']);
 	if( file_exists($root . $_POST['dir']) ) {
 		$files = scandir($root . $_POST['dir']);
