@@ -70,7 +70,7 @@ function mbsb_handle_upload_insert_click() {
 		jQuery.post(ajaxurl, data, function(response) {
 			response = JSON.parse (response);
 			row_id = response.row_id; 
-			jQuery('#mbsb_attached_files').append(response.code);
+			jQuery('#mbsb_attached_files').prepend(response.code);
 			jQuery('#row_'+row_id).show(1200);
 		});
 		tb_remove();
@@ -95,7 +95,7 @@ function mbsb_handle_url_embed (type) {
 		};
 		response = JSON.parse (response);
 		row_id = response.row_id; 
-		jQuery('#mbsb_attached_files').append(response.code);
+		jQuery('#mbsb_attached_files').prepend(response.code);
 		jQuery('#row_'+row_id).show(1200);
 	});
 }
@@ -112,7 +112,7 @@ function mbsb_handle_legacy (file) {
 	jQuery.post(ajaxurl, data, function(response) {
 		response = JSON.parse (response);
 		row_id = response.row_id; 
-		jQuery('#mbsb_attached_files').append(response.code);
+		jQuery('#mbsb_attached_files').prepend(response.code);
 		jQuery('#row_'+row_id).show(1200);
 	});
 }

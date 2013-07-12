@@ -684,7 +684,7 @@ function mbsb_sermon_media_meta_box() {
 	// end temp test for jqueryfiletree
 	echo '<table id="mbsb_attached_files" cellspacing="0" class="wp-list-table widefat fixed media">';
 	$sermon = new mbsb_sermon($post->ID);
-	$attachments = $sermon->attachments->get_attachments(false);
+	$attachments = $sermon->attachments->get_attachments(true);
 	if ($attachments)
 		foreach ($attachments as $attachment)
 			echo $attachment->get_admin_attachment_row ();
