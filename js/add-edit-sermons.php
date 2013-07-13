@@ -204,7 +204,10 @@ jQuery(document).ready(function($) {
 			multiFolder: false
 		},
 		function(file) {
-			mbsb_handle_legacy(file);
+			if ( confirm('<?php _e('Would you like to attach file ', MBSB) ?>'+file+' ?') ) {
+				tb_remove();  // close thickbox
+				mbsb_handle_legacy(file);
+			}
 		}
 	);
 <?php
