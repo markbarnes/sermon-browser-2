@@ -130,6 +130,8 @@ class mbsb_single_media_attachment {
 	public function get_url() {
 		if ($this->attachment_type == 'url')
 			return $this->data['url'];
+		elseif ($this->attachment_type == 'legacy')
+			return site_url(mbsb_get_option('legacy_upload_folder').$this->data['filename']);
 		elseif ($this->attachment_type == 'library')
 			return $this->data->guid;
 		else
@@ -272,7 +274,7 @@ class mbsb_single_media_attachment {
 	* @return string
 	*/
 	public function get_mime_type() {
-		if ($this->attachment_type == 'url')
+		if ($this->attachment_type == 'url' || $this->attachment_type == 'legacy')
 			return $this->data['mime_type'];
 		elseif ($this->attachment_type == 'library')
 			return $this->data->post_mime_type;

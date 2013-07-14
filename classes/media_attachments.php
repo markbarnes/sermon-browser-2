@@ -171,22 +171,22 @@ class mbsb_media_attachments extends mbsb_mpspss_template {
 		if (!is_file($absolute_file_path))
 			return null;
 		else {
-			//$url = site_url($legacy_upload_folder.filename);
-			//$headers = wp_remote_head ($url, array ('redirection' => 5));
-			//if (is_wp_error($headers) || $headers['response']['code'] != 200)
-			//	return null;
-			//else {
-				//$content_type = isset($headers['headers']['content-type']) ? $headers['headers']['content-type'] : '';
-				//if (($a = strpos($content_type, ';')) !== FALSE)
-				//	$content_type = substr($content_type, 0, $a);
+			$url = site_url($legacy_upload_folder.$filename);
+			$headers = wp_remote_head ($url, array ('redirection' => 5));
+			if (is_wp_error($headers) || $headers['response']['code'] != 200)
+				return null;
+			else {
+				$content_type = isset($headers['headers']['content-type']) ? $headers['headers']['content-type'] : '';
+				if (($a = strpos($content_type, ';')) !== FALSE)
+					$content_type = substr($content_type, 0, $a);
 				$metadata = array('type' => 'legacy', 'filename' => $filename, 
-					//'mime_type' => $content_type, 
+					'mime_type' => $content_type, 
 					'date_time' => time());
 				if ($meta_id = add_post_meta ($this->sermon_id, 'attachments', $metadata))
 					return new mbsb_single_media_attachment($meta_id);
 				else
 					return false;
-			//}
+			}
 		}
 	}
 	

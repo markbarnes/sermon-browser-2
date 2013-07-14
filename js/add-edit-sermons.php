@@ -201,6 +201,7 @@ jQuery(document).ready(function($) {
 			root: '',
 			script: ajaxurl,
 			_wpnonce: '<?php echo wp_create_nonce('mbsb_jqueryFileTree') ?>',
+			action: 'mbsb_jqueryFileTree',
 			multiFolder: false
 		},
 		function(file) {
