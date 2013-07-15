@@ -731,6 +731,7 @@ function mbsb_add_admin_menu() {
 	add_submenu_page('sermon-browser', __('Files', MBSB), __('Files', MBSB), 'upload_files', 'sermon-browser_files', 'mbsb_files');
 	add_submenu_page('sermon-browser', __('Options', MBSB), __('Options', MBSB), 'manage_options', 'sermon-browser_options', 'mbsb_options_admin_page');
 	add_submenu_page('sermon-browser', __('Templates', MBSB), __('Templates', MBSB), 'manage_options', 'sermon-browser_templates', 'mbsb_templates');
+	add_submenu_page('sermon-browser', __('Import', MBSB), __('Import', MBSB), 'edit_plugins', 'sermon-browser_import', 'mbsb_import_admin_page');
 	add_submenu_page('sermon-browser', __('Uninstall', MBSB), __('Uninstall', MBSB), 'edit_plugins', 'sermon-browser_uninstall', 'mbsb_uninstall_admin_page');
 	add_submenu_page('sermon-browser', __('Help', MBSB), __('Help', MBSB), 'publish_posts', 'sermon-browser_help', 'mbsb_help');
 	add_submenu_page('sermon-browser', __('Pray for Japan', MBSB), __('Pray for Japan', MBSB), 'publish_posts', 'sermon-browser_japan', 'mbsb_japan');
@@ -1011,6 +1012,45 @@ function mbsb_post_updated_messages($messages) {
 			10 => sprintf( __('Service draft updated. <a target="_blank" href="%s">Preview service</a>'), esc_url (add_query_arg ('preview', 'true', get_permalink ($post_ID)))),
 		);
 	return $messages;
+}
+
+/**
+* Display Import page
+*/
+function mbsb_import_admin_page() {
+	global $wpdb;
+?>
+	<div class="wrap">
+		<div id="icon-sermon-browser" class="icon32 icon32-mbsb-import"><br /></div>
+		<h2><?php _e('Sermon Browser Import', MBSB); ?></h2>
+		<p>
+		<?php _e('Sermon Browser 2 can import sermons, series, services, and preachers from Sermon Browser 1.  
+		When you import data from SB1, your SB1 data will remain untouched in the database, in case you would like to run SB1 in the future.  
+		To remove SB1 data after you import, activate SB1 and choose Uninstall from the SB1 menu.', MBSB); ?>
+		</p>
+		<p>
+		<?php _e('There is no undo for this import function.  However, you can Uninstall SB2, which will remove all SB2 data from the database.  
+		Uninstalling will remove imported data as well as any data that you have manually entered into SB2.', MBSB); ?>
+		</p>
+<?php
+	$import_count = array();
+	$tables = array('sb_sermons', 'sb_series', 'sb_preachers', 'sb_services');
+	foreach ($tables as $table) {
+		$table_name = $wpdb->prefix.$table;
+		if ($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") == $table_name) {
+			$wpdb->get_results( 'SELECT COUNT(*) FROM table_name' );
+			$import_count[$table] = $wpdb->num_rows;
+		}
+		else
+			$import_count[$table] = 0;
+	}
+?>
+		<form method="post">
+		<p>
+		</p>
+		</form>
+	</div><!-- /.wrap -->
+<?php
 }
 
 /**
