@@ -1044,8 +1044,7 @@ function mbsb_import_admin_page() {
 	foreach ($tables as $table) {
 		$table_name = $wpdb->prefix.$table;
 		if ($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") == $table_name) {
-			$results = $wpdb->get_results( "SELECT COUNT(*) as 'number_of_rows' FROM $table_name" );
-			$import_count[$table] = $results[0]->number_of_rows;
+			$import_count[$table] = $wpdb->get_var( "SELECT COUNT(*) FROM $table_name" );
 		}
 		else
 			$import_count[$table] = 0;
@@ -1085,7 +1084,47 @@ function mbsb_import_admin_page() {
 * Import data from SB1
 */
 function mbsb_import_from_SB1() {
-	wp_die('Import function not coded yet.');
+	//wp_die('Import function not coded yet.');
+	global $wpdb;
+	// Get currently logged in user ID, used as the author of the imported posts
+	$current_user_id = wp_get_current_user()->ID;
+	// Import Series
+	$count_series_imported = 0;
+	$count_series_duplicate = 0;
+	$count_series_error = 0;
+	$series_xref = array();
+	$series_sb1_db = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}sb_series", OBJECT_K);
+	if ($wpdb->num_rows > 0) {
+		foreach ($series_sb1_db as $series_sb1) {
+			$series_sb2 = get_page_by_title($series_sb1->name, OBJECT, 'mbsb_series');
+			if ($series_sb2 === NULL) {
+				// add new series to SB2
+				$new_series = array(
+					'post_title'       => $series_sb1->name,
+					'post_author'      => $current_user_id,
+					'post_status'      => 'publish',
+					'post_type'        => 'mbsb_series'
+				);
+				$sb2_series_id = wp_insert_post($new_series);
+				if ( $sb2_series_id ) {
+					$count_series_imported++;
+					$series_xrf[$series_sb1->id] = $sb2_series_id;
+				}
+				else {
+					$count_series_error++;
+					$series_xrf[$series_sb1->id] = 0;
+				}
+			}
+			else {
+				$count_series_duplicate++;
+				$series_xrf[$series_sb1->id] = $series_sb2->ID;
+			}
+		}
+	}
+	// Output results
+	wp_die( "$count_series_imported series imported.<br />
+		$count_series_duplicate duplicate series skipped.<br />
+		$count_series_error series not imported due to error.");
 }
 
 /**
