@@ -1018,13 +1018,15 @@ function mbsb_post_updated_messages($messages) {
 * Display Import page
 */
 function mbsb_import_admin_page() {
+	if (isset($_POST['import']))
+		mbsb_import_from_SB1();
 	global $wpdb;
 ?>
 	<div class="wrap">
 		<div id="icon-sermon-browser" class="icon32 icon32-mbsb-import"><br /></div>
 		<h2><?php _e('Sermon Browser Import', MBSB); ?></h2>
 		<p>
-		<?php _e('Sermon Browser 2 can import sermons, series, services, and preachers from Sermon Browser 1.  
+		<?php _e('Sermon Browser 2 can import sermons, series, preachers, and services from Sermon Browser 1.  
 		When you import data from SB1, your SB1 data will remain untouched in the database, in case you would like to run SB1 in the future.  
 		To remove SB1 data after you import, activate SB1 and choose Uninstall from the SB1 menu.', MBSB); ?>
 		</p>
@@ -1032,25 +1034,58 @@ function mbsb_import_admin_page() {
 		<?php _e('There is no undo for this import function.  However, you can Uninstall SB2, which will remove all SB2 data from the database.  
 		Uninstalling will remove imported data as well as any data that you have manually entered into SB2.', MBSB); ?>
 		</p>
+		<p>
+		<?php _e('We recommend that you back up your database before using this import feature.', MBSB); ?>
+		</p>
+		<hr />
 <?php
 	$import_count = array();
 	$tables = array('sb_sermons', 'sb_series', 'sb_preachers', 'sb_services');
 	foreach ($tables as $table) {
 		$table_name = $wpdb->prefix.$table;
 		if ($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") == $table_name) {
-			$wpdb->get_results( 'SELECT COUNT(*) FROM table_name' );
-			$import_count[$table] = $wpdb->num_rows;
+			$results = $wpdb->get_results( "SELECT COUNT(*) as 'number_of_rows' FROM $table_name" );
+			$import_count[$table] = $results[0]->number_of_rows;
 		}
 		else
 			$import_count[$table] = 0;
 	}
+	if ( array_values($import_count) === array(0,0,0,0) ) {
 ?>
-		<form method="post">
 		<p>
+		<?php _e('There is not any SB1 data found in your database.', MBSB); ?>
+		</p>
+<?php
+	}
+	else {
+?>
+		<p>
+		<?php _e('The following SB1 data has been found in your database:', MBSB); ?>
+		</p>
+		<ul>
+			<li><?php echo $import_count['sb_sermons'].' '.__('Sermons', MBSB); ?></li>
+			<li><?php echo $import_count['sb_series'].' '.__('Series', MBSB); ?></li>
+			<li><?php echo $import_count['sb_preachers'].' '.__('Preachers', MBSB); ?></li>
+			<li><?php echo $import_count['sb_services'].' '.__('Services', MBSB); ?></li>
+		</ul>
+
+		<form method="post">
+		<p class="submit">
+			<input type="submit" name="import" value="<?php esc_attr_e('Import data from SB1', MBSB); ?>" onclick="return confirm('<?php esc_attr_e('Do you REALLY want to import data from SB1?', MBSB); ?>')" />
 		</p>
 		</form>
+<?php
+	}
+?>
 	</div><!-- /.wrap -->
 <?php
+}
+
+/**
+* Import data from SB1
+*/
+function mbsb_import_from_SB1() {
+	wp_die('Import function not coded yet.');
 }
 
 /**
@@ -1092,7 +1127,8 @@ function mbsb_uninstall_admin_page() {
 			</ul>
 		</p>
 		<p class="submit">
-			<input type="submit" name="uninstall" value="<?php esc_attr_e('Uninstall', MBSB); ?>" onclick="return confirm('<?php esc_attr_e('Do you REALLY want to delete all data?', MBSB); ?>')" /></p>
+			<input type="submit" name="uninstall" value="<?php esc_attr_e('Uninstall', MBSB); ?>" onclick="return confirm('<?php esc_attr_e('Do you REALLY want to delete all data?', MBSB); ?>')" />
+		</p>
 		</form>
 	</div><!-- /.wrap -->
 	<script>
