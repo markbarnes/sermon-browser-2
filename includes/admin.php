@@ -1091,6 +1091,7 @@ function mbsb_import_from_SB1() {
 	// Import Series
 	$count_series_imported = 0;
 	$count_series_duplicate = 0;
+	$count_series_restored = 0;
 	$count_series_error = 0;
 	$series_xref = array();
 	$series_sb1_db = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}sb_series", OBJECT_K);
@@ -1100,10 +1101,10 @@ function mbsb_import_from_SB1() {
 			if ($series_sb2 === NULL) {
 				// add new series to SB2
 				$new_series = array(
-					'post_title'       => $series_sb1->name,
-					'post_author'      => $current_user_id,
-					'post_status'      => 'publish',
-					'post_type'        => 'mbsb_series'
+					'post_title'    => $series_sb1->name,
+					'post_author'   => $current_user_id,
+					'post_status'   => 'publish',
+					'post_type'     => 'mbsb_series'
 				);
 				$sb2_series_id = wp_insert_post($new_series);
 				if ( $sb2_series_id ) {
@@ -1116,15 +1117,85 @@ function mbsb_import_from_SB1() {
 				}
 			}
 			else {
-				$count_series_duplicate++;
+				// series already exists
+				if ($series_sb2->post_status == 'trash') {
+					// If series is in the trash, move it out of the trash.
+					wp_publish_post($series_sb2->ID);
+					$count_series_restored++;
+				}
+				else {
+					// skip import, use existing series
+					$count_series_duplicate++;
+				}
 				$series_xrf[$series_sb1->id] = $series_sb2->ID;
 			}
 		}
 	}
+	// Import Services
+	$count_services_imported = 0;
+	$count_services_duplicate = 0;
+	$count_services_restored = 0;
+	$count_services_error = 0;
+	$services_xref = array();
+	$services_sb1_db = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}sb_services", OBJECT_K);
+	if ($wpdb->num_rows > 0) {
+		foreach ($services_sb1_db as $service_sb1) {
+			$service_sb2 = get_page_by_title($service_sb1->name, OBJECT, 'mbsb_service');
+			if ($service_sb2 === NULL) {
+				// add new series to SB2
+				$new_service = array(
+					'post_title'   => $service_sb1->name,
+					'post_author'  => $current_user_id,
+					'post_status'  => 'publish',
+					'post_type'    => 'mbsb_service'
+				);
+				$sb2_service_id = wp_insert_post($new_service);
+				if ( $sb2_service_id ) {
+					$count_services_imported++;
+					$services_xrf[$service_sb1->id] = $sb2_service_id;
+					// Add service metadata
+					$seconds = strtotime ('1 January 1970 '.trim($service_sb1->time).' UTC');
+					if ($seconds and $seconds != '-1')
+						update_post_meta ($sb2_service_id, 'mbsb_service_time', $seconds);
+				}
+				else {
+					$count_services_error++;
+					$services_xrf[$service_sb1->id] = 0;
+				}
+			}
+			else {
+				// service already exists
+				if ($service_sb2->post_status == 'trash') {
+					// If service is in the trash, move it out of the trash.
+					wp_publish_post($service_sb2->ID);
+					$count_services_restored++;
+				}
+				else {
+					// skip import, use existing series
+					$count_services_duplicate++;
+				}
+				$services_xrf[$service_sb1->id] = $service_sb2->ID;
+			}
+		}
+	}
 	// Output results
-	wp_die( "$count_series_imported series imported.<br />
-		$count_series_duplicate duplicate series skipped.<br />
-		$count_series_error series not imported due to error.");
+?>
+	<div id="message" class="updated fade">
+		<h3>Import Results</h3>
+		<p><ul>
+			<li><?php echo $count_series_imported, ' ', __('series imported.', MBSB); ?></li>
+			<li><?php echo $count_series_duplicate, ' ', __('duplicate series skipped.', MBSB); ?></li>
+			<li><?php echo $count_series_restored, ' ', __('series restored from the trash.', MBSB); ?></li>
+			<li><?php echo $count_series_error, ' ', __('series not imported due to error.', MBSB); ?></li>
+		</ul></p>
+		<p><ul>
+			<li><?php echo $count_services_imported, ' ', __('services imported.', MBSB); ?></li>
+			<li><?php echo $count_services_duplicate, ' ', __('duplicate services skipped.', MBSB); ?></li>
+			<li><?php echo $count_services_restored, ' ', __('services restored from the trash.', MBSB); ?></li>
+			<li><?php echo $count_services_error, ' ', __('services not imported due to error.', MBSB); ?></li>
+		</ul></p>
+	</div>
+<?php
 }
 
 /**
