@@ -1084,7 +1084,6 @@ function mbsb_import_admin_page() {
 * Import data from SB1
 */
 function mbsb_import_from_SB1() {
-	//wp_die('Import function not coded yet.');
 	global $wpdb;
 	// Get currently logged in user ID, used as the author of the imported posts
 	$current_user_id = wp_get_current_user()->ID;
@@ -1109,11 +1108,11 @@ function mbsb_import_from_SB1() {
 				$sb2_series_id = wp_insert_post($new_series);
 				if ( $sb2_series_id ) {
 					$count_series_imported++;
-					$series_xrf[$series_sb1->id] = $sb2_series_id;
+					$series_xref[$series_sb1->id] = $sb2_series_id;
 				}
 				else {
 					$count_series_error++;
-					$series_xrf[$series_sb1->id] = 0;
+					$series_xref[$series_sb1->id] = 0;
 				}
 			}
 			else {
@@ -1127,7 +1126,7 @@ function mbsb_import_from_SB1() {
 					// skip import, use existing series
 					$count_series_duplicate++;
 				}
-				$series_xrf[$series_sb1->id] = $series_sb2->ID;
+				$series_xref[$series_sb1->id] = $series_sb2->ID;
 			}
 		}
 	}
@@ -1152,7 +1151,7 @@ function mbsb_import_from_SB1() {
 				$sb2_service_id = wp_insert_post($new_service);
 				if ( $sb2_service_id ) {
 					$count_services_imported++;
-					$services_xrf[$service_sb1->id] = $sb2_service_id;
+					$services_xref[$service_sb1->id] = $sb2_service_id;
 					// Add service metadata
 					$seconds = strtotime ('1 January 1970 '.trim($service_sb1->time).' UTC');
 					if ($seconds and $seconds != '-1')
@@ -1160,7 +1159,7 @@ function mbsb_import_from_SB1() {
 				}
 				else {
 					$count_services_error++;
-					$services_xrf[$service_sb1->id] = 0;
+					$services_xref[$service_sb1->id] = 0;
 				}
 			}
 			else {
@@ -1174,7 +1173,54 @@ function mbsb_import_from_SB1() {
 					// skip import, use existing series
 					$count_services_duplicate++;
 				}
-				$services_xrf[$service_sb1->id] = $service_sb2->ID;
+				$services_xref[$service_sb1->id] = $service_sb2->ID;
+			}
+		}
+	}
+	// Import Preachers
+	$count_preachers_imported = 0;
+	$count_preachers_duplicate = 0;
+	$count_preachers_restored = 0;
+	$count_preachers_error = 0;
+	$preacher_image_skipped = false;
+	$preachers_xref = array();
+	$preachers_sb1_db = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}sb_preachers", OBJECT_K);
+	if ($wpdb->num_rows > 0) {
+		foreach ($preachers_sb1_db as $preacher_sb1) {
+			$preacher_sb2 = get_page_by_title($preacher_sb1->name, OBJECT, 'mbsb_preacher');
+			if ($preacher_sb2 === NULL) {
+				// add new preacher to SB2
+				$new_preacher = array(
+					'post_title'   => $preacher_sb1->name,
+					'post_author'  => $current_user_id,
+					'post_status'  => 'publish',
+					'post_type'    => 'mbsb_preacher',
+					'post_content' => $preacher_sb1->description
+				);
+				$sb2_preacher_id = wp_insert_post($new_preacher);
+				if ( $sb2_preacher_id ) {
+					$count_preachers_imported++;
+					$preachers_xref[$preacher_sb1->id] = $sb2_preacher_id;
+					if ($preacher_sb1->image != '')
+						$preacher_image_skipped = true;
+				}
+				else {
+					$count_preachers_error++;
+					$preachers_xref[$preacher_sb1->id] = 0;
+				}
+			}
+			else {
+				// preacher already exists
+				if ($preacher_sb2->post_status == 'trash') {
+					// If preacher is in the trash, move it out of the trash.
+					wp_publish_post($preacher_sb2->ID);
+					$count_preachers_restored++;
+				}
+				else {
+					// skip import, use existing preacher
+					$count_preachers_duplicate++;
+				}
+				$preachers_xref[$preacher_sb1->id] = $preacher_sb2->ID;
 			}
 		}
 	}
@@ -1193,6 +1239,13 @@ function mbsb_import_from_SB1() {
 			<li><?php echo $count_services_duplicate, ' ', __('duplicate services skipped.', MBSB); ?></li>
 			<li><?php echo $count_services_restored, ' ', __('services restored from the trash.', MBSB); ?></li>
 			<li><?php echo $count_services_error, ' ', __('services not imported due to error.', MBSB); ?></li>
+		</ul></p>
+		<p><ul>
+			<li><?php echo $count_preachers_imported, ' ', __('preachers imported.', MBSB); ?>
+				<?php if ($preacher_image_skipped) echo ' ', __('Note: Images attached to preachers in SB1 have not been imported into SB2.', MBSB); ?></li>
+			<li><?php echo $count_preachers_duplicate, ' ', __('duplicate preachers skipped.', MBSB); ?></li>
+			<li><?php echo $count_preachers_restored, ' ', __('preachers restored from the trash.', MBSB); ?></li>
+			<li><?php echo $count_preachers_error, ' ', __('preachers not imported due to error.', MBSB); ?></li>
 		</ul></p>
 	</div>
 <?php
