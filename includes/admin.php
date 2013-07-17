@@ -1224,10 +1224,45 @@ function mbsb_import_from_SB1() {
 			}
 		}
 	}
+	// Import Sermons
+	$count_sermons_imported = 0;
+	$count_sermons_duplicate = 0;
+	$count_sermons_restored = 0;
+	$count_sermons_error = 0;
+	$sermons_xref = array();
+	$sermons_sb1_db = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}sb_sermons", OBJECT_K);
+	if ($wpdb->num_rows > 0) {
+		foreach ($sermons_sb1_db as $sermon_sb1) {
+			$sermon_sb2 = get_page_by_title($sermon_sb1->name, OBJECT, 'mbsb_sermon');
+			if ( $sermon_sb2 === NULL or substr($sermon_sb2->post_date, 0, 10) != substr($sermon_sb1->datetime, 0, 10) ) {
+				// add new sermon to SB2 - NOT CODED YET
+				$count_sermons_error++;
+			}
+			else {
+				// sermon already exists
+				if ($sermon_sb2->post_status == 'trash') {
+					// If sermon is in the trash, move it out of the trash.
+					wp_publish_post($sermon_sb2->ID);
+					$count_sermons_restored++;
+				}
+				else {
+					// skip import, use existing sermon
+					$count_sermons_duplicate++;
+				}
+				$sermons_xref[$sermon_sb1->id] = $sermon_sb2->ID;
+			}
+		}
+	}
 	// Output results
 ?>
 	<div id="message" class="updated fade">
 		<h3>Import Results</h3>
+		<p><ul>
+			<li><?php echo $count_sermons_imported, ' ', __('sermons imported.', MBSB); ?></li>
+			<li><?php echo $count_sermons_duplicate, ' ', __('duplicate sermons skipped.', MBSB); ?></li>
+			<li><?php echo $count_sermons_restored, ' ', __('sermons restored from the trash.', MBSB); ?></li>
+			<li><?php echo $count_sermons_error, ' ', __('sermons not imported due to error.', MBSB); ?></li>
+		</ul></p>
 		<p><ul>
 			<li><?php echo $count_series_imported, ' ', __('series imported.', MBSB); ?></li>
 			<li><?php echo $count_series_duplicate, ' ', __('duplicate series skipped.', MBSB); ?></li>
