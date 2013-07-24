@@ -577,7 +577,7 @@ function mbsb_ajax_attach_legacy() {
 }
 
 /**
-* Handles the mbsb_ajax_jqueryFileTree AJAX request, the connector script for the legacy file picker
+* Handles the mbsb_jqueryFileTree AJAX request, the connector script for the legacy file picker
 */
 function mbsb_ajax_jqueryFileTree() {
 	if (!check_ajax_referer ("mbsb_jqueryFileTree"))
@@ -1229,26 +1229,60 @@ function mbsb_import_from_SB1() {
 	$count_sermons_duplicate = 0;
 	$count_sermons_restored = 0;
 	$count_sermons_error = 0;
+	$count_tags = 0;
 	$sermons_xref = array();
 	$sermons_sb1_db = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}sb_sermons", OBJECT_K);
 	if ($wpdb->num_rows > 0) {
 		foreach ($sermons_sb1_db as $sermon_sb1) {
-			$sermon_sb2 = get_page_by_title($sermon_sb1->name, OBJECT, 'mbsb_sermon');
-			if ( $sermon_sb2 === NULL or substr($sermon_sb2->post_date, 0, 10) != substr($sermon_sb1->datetime, 0, 10) ) {
-				// add new sermon to SB2 - NOT CODED YET
-				$count_sermons_error++;
+			$sermon_sb2 = get_page_by_title($sermon_sb1->title, OBJECT, 'mbsb_sermon');
+			if ( $sermon_sb2 === NULL or substr($sermon_sb2->post_date, 0, 10) != substr($sermon_sb1->datetime, 0, 10) or $sermon_sb2->post_status === 'trash' ) {
+				// add new sermon to SB2
+				$new_sermon = array(
+					'post_title'   => $sermon_sb1->title,
+					'post_author'  => $current_user_id,
+					'post_status'  => 'publish',
+					'post_type'    => 'mbsb_sermon',
+					'post_content' => $sermon_sb1->description,
+					'post_date'    => $sermon_sb1->datetime
+				);
+				$sb2_sermon_id = wp_insert_post($new_sermon);
+				if ( $sb2_sermon_id ) {
+					$count_sermons_imported++;
+					$sermons_xref[$sermon_sb1->id] = $sb2_sermon_id;
+					// Add series data
+					if ( $sermon_sb1->series_id )
+						if ( $series_xref[$sermon_sb1->series_id] )
+							update_post_meta( $sb2_sermon_id, 'series', $series_xref[$sermon_sb1->series_id] );
+					// Add service data
+					if ( $sermon_sb1->service_id )
+						if ( $services_xref[$sermon_sb1->service_id] )
+							update_post_meta( $sb2_sermon_id, 'service', $services_xref[$sermon_sb1->service_id] );
+					// Add preacher data
+					if ( $sermon_sb1->preacher_id )
+						if ( $preachers_xref[$sermon_sb1->preacher_id] )
+							update_post_meta( $sb2_sermon_id, 'preacher', $preachers_xref[$sermon_sb1->preacher_id] );
+					// Add tag data
+					$sb1_tag_db = $wpdb->get_results( "SELECT sermons_tags.*, tags.name FROM {$wpdb->prefix}sb_sermons_tags as sermons_tags LEFT JOIN {$wpdb->prefix}sb_tags as tags ON sermons_tags.tag_id=tags.id WHERE sermons_tags.sermon_id={$sermon_sb1->id}" );
+					if ( $wpdb->num_rows > 0 ) {
+						foreach ($sb1_tag_db as $tag) {
+							if ($tag->name)
+								wp_set_post_tags( $sb2_sermon_id, $tag->name, true );
+						}
+					}
+					// Still to do:
+					//     Fix problem with multiple sermons with identical titles
+					//     Bible Passages
+					//     Media Attachments
+				}
+				else {
+					$count_sermons_error++;
+					$sermons_xref[$sermon_sb1->id] = 0;
+				}
 			}
 			else {
 				// sermon already exists
-				if ($sermon_sb2->post_status == 'trash') {
-					// If sermon is in the trash, move it out of the trash.
-					wp_publish_post($sermon_sb2->ID);
-					$count_sermons_restored++;
-				}
-				else {
-					// skip import, use existing sermon
-					$count_sermons_duplicate++;
-				}
+				// skip import, use existing sermon
+				$count_sermons_duplicate++;
 				$sermons_xref[$sermon_sb1->id] = $sermon_sb2->ID;
 			}
 		}
@@ -1260,7 +1294,6 @@ function mbsb_import_from_SB1() {
 		<p><ul>
 			<li><?php echo $count_sermons_imported, ' ', __('sermons imported.', MBSB); ?></li>
 			<li><?php echo $count_sermons_duplicate, ' ', __('duplicate sermons skipped.', MBSB); ?></li>
-			<li><?php echo $count_sermons_restored, ' ', __('sermons restored from the trash.', MBSB); ?></li>
 			<li><?php echo $count_sermons_error, ' ', __('sermons not imported due to error.', MBSB); ?></li>
 		</ul></p>
 		<p><ul>
