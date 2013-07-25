@@ -107,8 +107,8 @@ function mbsb_onload_post_page () {
 	$screen = get_current_screen();
 	if (substr($screen->post_type, 0, 5) == 'mbsb_') {
 		add_filter ("get_user_option_meta-box-order_{$screen->post_type}", 'mbsb_set_default_metabox_sort_order', 10, 3);
-		wp_enqueue_script('mbsb_jqueryFileTree_js', mbsb_plugins_url('lib/jqueryFileTree/jqueryFileTree.js'), array('jquery'), '1.01');
-		wp_enqueue_style('mbsb_jqueryFileTree_css', mbsb_plugins_url('lib/jqueryFileTree/jqueryFileTree.css'), false, '1.01');
+		wp_enqueue_script('mbsb_jqueryFileTree_js', mbsb_plugins_url('lib/jqueryFileTree/jqueryFileTree.js'), array('jquery'), '1.01.01');
+		wp_enqueue_style('mbsb_jqueryFileTree_css', mbsb_plugins_url('lib/jqueryFileTree/jqueryFileTree.css'), false, '1.01.01');
 	}
 	add_action ('admin_enqueue_scripts', 'mbsb_add_javascript_and_styles_to_admin_pages');
 	if (isset($_GET['message']))
@@ -1234,8 +1234,16 @@ function mbsb_import_from_SB1() {
 	$sermons_sb1_db = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}sb_sermons", OBJECT_K);
 	if ($wpdb->num_rows > 0) {
 		foreach ($sermons_sb1_db as $sermon_sb1) {
-			$sermon_sb2 = get_page_by_title($sermon_sb1->title, OBJECT, 'mbsb_sermon');
-			if ( $sermon_sb2 === NULL or substr($sermon_sb2->post_date, 0, 10) != substr($sermon_sb1->datetime, 0, 10) or $sermon_sb2->post_status === 'trash' ) {
+			$sermons_sb2 = mbsb_get_sermons_by_title($sermon_sb1->title);
+			$duplicate_sermon_found = false;
+			if ( is_array($sermons_sb2) )
+				foreach ($sermons_sb2 as $sermon_sb2) {
+					if ( substr($sermon_sb2->post_date, 0, 10) == substr($sermon_sb1->datetime, 0, 10) and $sermon_sb2->post_status != 'trash' ) {
+						$duplicate_sermon_found = true;
+						$sermons_xref[$sermon_sb1->id] = $sermon_sb2->ID;
+					}
+				}
+			if ( $sermons_sb2 === NULL or !$duplicate_sermon_found ) {
 				// add new sermon to SB2
 				$new_sermon = array(
 					'post_title'   => $sermon_sb1->title,
@@ -1270,7 +1278,6 @@ function mbsb_import_from_SB1() {
 						}
 					}
 					// Still to do:
-					//     Fix problem with multiple sermons with identical titles
 					//     Bible Passages
 					//     Media Attachments
 				}
@@ -1283,7 +1290,6 @@ function mbsb_import_from_SB1() {
 				// sermon already exists
 				// skip import, use existing sermon
 				$count_sermons_duplicate++;
-				$sermons_xref[$sermon_sb1->id] = $sermon_sb2->ID;
 			}
 		}
 	}
@@ -1317,6 +1323,29 @@ function mbsb_import_from_SB1() {
 		</ul></p>
 	</div>
 <?php
+}
+
+/**
+* Retrieves an array of objects containing all sermons with a certain title
+*
+* Based on the core function get_page_by_title, but will return multiple results in an array
+*
+* @param string title to search for
+* @return array of objects
+* @return null if no sermons found
+*/
+function mbsb_get_sermons_by_title($sermon_title) {
+	global $wpdb;
+	//Query all columns so as not to use get_post()
+	$results = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $wpdb->posts WHERE post_title = %s AND post_type = 'mbsb_sermon' AND post_status = 'publish'", $sermon_title ) );
+	if ($results) {
+		$output = array();
+		foreach ( $results as $post ) {
+			$output[] = $post;
+		}
+		return $output;
+	}
+	return null;
 }
 
 /**
