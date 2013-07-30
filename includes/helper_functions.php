@@ -84,12 +84,15 @@ function mbsb_default_options($all_options=array() ) {
 * @param mixed $default - the default value if the option does not exist
 * @return mixed
 */
-function mbsb_get_option ($option, $default = false) {
+function mbsb_get_option ($option, $default = null) {
 	$all_options = get_option ('sermon_browser_2');
-	if (isset ($all_options[$option]))
+	if ( isset($all_options[$option]) and $all_options[$option] )
 		$return = $all_options[$option];
 	else
-		$return = $default;
+		if ($default === null)
+			$return = mbsb_get_default_option($option);
+		else
+			$return = $default;
 	return apply_filters ("mbsb_get_option_{$option}", $return);
 }
 
