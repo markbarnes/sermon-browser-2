@@ -1256,19 +1256,20 @@ function mbsb_import_from_SB1() {
 				$sb2_sermon_id = wp_insert_post($new_sermon);
 				if ( $sb2_sermon_id ) {
 					$count_sermons_imported++;
+					$sb2_sermon_object = new mbsb_sermon($sb2_sermon_id);
 					$sermons_xref[$sermon_sb1->id] = $sb2_sermon_id;
 					// Add series data
 					if ( $sermon_sb1->series_id )
 						if ( $series_xref[$sermon_sb1->series_id] )
-							update_post_meta( $sb2_sermon_id, 'series', $series_xref[$sermon_sb1->series_id] );
+							$sb2_sermon_object->update_series( $series_xref[$sermon_sb1->series_id] );
 					// Add service data
 					if ( $sermon_sb1->service_id )
 						if ( $services_xref[$sermon_sb1->service_id] )
-							update_post_meta( $sb2_sermon_id, 'service', $services_xref[$sermon_sb1->service_id] );
+							$sb2_sermon_object->update_service( $services_xref[$sermon_sb1->service_id] );
 					// Add preacher data
 					if ( $sermon_sb1->preacher_id )
 						if ( $preachers_xref[$sermon_sb1->preacher_id] )
-							update_post_meta( $sb2_sermon_id, 'preacher', $preachers_xref[$sermon_sb1->preacher_id] );
+							$sb2_sermon_object->update_preacher( $preachers_xref[$sermon_sb1->preacher_id] );
 					// Add tag data
 					$sb1_tag_db = $wpdb->get_results( "SELECT sermons_tags.*, tags.name FROM {$wpdb->prefix}sb_sermons_tags as sermons_tags LEFT JOIN {$wpdb->prefix}sb_tags as tags ON sermons_tags.tag_id=tags.id WHERE sermons_tags.sermon_id={$sermon_sb1->id}" );
 					if ( $wpdb->num_rows > 0 ) {
