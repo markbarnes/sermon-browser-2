@@ -1278,8 +1278,19 @@ function mbsb_import_from_SB1() {
 								wp_set_post_tags( $sb2_sermon_id, $tag->name, true );
 						}
 					}
+					// Bible Passages
+					$start = unserialize($sermon_sb1->start);
+					$end = unserialize($sermon_sb1->end);
+					$passages = array();
+					$bible_passage_count = count($start);
+					for ($i = 0; $i < $bible_passage_count; $i++) {
+						if ( $start[$i] and $end[$i] )
+							$passages[] = "{$start[$i]['book']} {$start[$i]['chapter']}:{$start[$i]['verse']}-{$end[$i]['book']} {$end[$i]['chapter']}:{$end[$i]['verse']}";
+					}
+					$passages_string = implode(';',$passages);
+					if ($passages_string)
+						$sb2_sermon_object->update_passages($passages_string);
 					// Still to do:
-					//     Bible Passages
 					//     Media Attachments
 				}
 				else {
