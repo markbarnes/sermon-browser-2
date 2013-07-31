@@ -97,6 +97,20 @@ function mbsb_get_option ($option, $default = null) {
 }
 
 /**
+* Gets a Sermon Browser 1 option (previous plugin version)
+*
+* @param string $option - the name of the SB1 option
+* @return mixed - returns null if the option does not exist
+*/
+function mbsb_get_sb1_option ($option) {
+	$sb1_options = unserialize( base64_decode( get_option('sermonbrowser_options') ) );
+	if ( $sb1_options and isset($sb1_options[$option]) )
+		return $sb1_options[$option];
+	else
+		return null;
+}
+
+/**
 * Gets a SermonBrowser default option
 *
 * @param string $option - the name of the option
